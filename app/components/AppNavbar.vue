@@ -1,8 +1,8 @@
 <template>
   <nav class="w-full h-[72px] bg-base px-16 flex items-center justify-between">
     <NuxtLink to="/" class="flex items-center gap-[10px]">
-      <img src="/logo.jpg" alt="Upper Room" class="w-12 h-12 rounded-md object-cover" />
-      <span class="font-heading text-xl font-bold text-primary">Upper Room</span>
+      <img src="/logo.jpg" alt="Upper Room Taipei Housing" class="w-12 h-12 rounded-md object-cover" />
+      <span class="font-heading text-xl font-bold text-primary">Upper Room Taipei Housing</span>
     </NuxtLink>
 
     <div class="flex items-center gap-8">
