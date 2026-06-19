@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { rooms } from '~/composables/useData'
-
-const previewRooms = rooms.slice(0, 2)
+const {data: roomsData} = await useRoomsList()
+const previewRooms = computed(() => (roomsData.value ?? []).slice(0, 2))
 const {data: previewEventsData} = await useUpcomingEvents()
 const previewEvents = computed(() => previewEventsData.value ?? [])
 const urlFor = useSanityImageUrl()
@@ -123,18 +122,18 @@ const urlFor = useSanityImageUrl()
       <div class="flex flex-col gap-5 md:gap-0">
         <div
           v-for="room in previewRooms"
-          :key="room.id"
+          :key="room._id"
           class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 md:py-6 md:border-b md:border-subtle"
         >
           <img
-            :src="room.previewImage"
-            :alt="room.name"
+            :src="urlFor(room.mainImage).width(400).height(260).fit('crop').auto('format').url()"
+            :alt="room.mainImage.alt || room.title"
             class="w-full md:w-[200px] h-[200px] md:h-[130px] object-cover rounded-[10px] shrink-0"
           />
           <div class="flex-1 flex flex-col gap-2">
-            <h3 class="font-heading text-[22px] font-bold text-primary">{{ room.name }}</h3>
-            <p class="font-body text-[13px] font-normal text-muted">📍 {{ room.location }}</p>
-            <p class="font-heading text-[20px] font-bold text-amber">{{ room.priceDisplay }}</p>
+            <h3 class="font-heading text-[22px] font-bold text-primary">{{ room.title }}</h3>
+            <p class="font-body text-[13px] font-normal text-muted">📍 {{ roomLocation(room) }}</p>
+            <p class="font-heading text-[20px] font-bold text-amber">{{ roomPriceDisplay(room.price) }}</p>
           </div>
           <div class="flex flex-row md:flex-col items-center justify-between md:justify-start gap-2.5">
             <span
@@ -146,7 +145,7 @@ const urlFor = useSanityImageUrl()
               {{ room.status === 'available' ? 'Available' : 'Rented' }}
             </span>
             <NuxtLink
-              :to="`/rooms/${room.id}`"
+              :to="`/rooms/${room.slug}`"
               class="font-body text-[13px] font-semibold text-primary bg-card rounded-[10px] py-[10px] px-5 hover:bg-subtle transition-colors"
             >
               Details
