@@ -28,9 +28,9 @@ const past = computed(() => events.filter(e => !e.upcoming))
       <div
         v-for="evt in upcoming"
         :key="evt.id"
-        class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-7 py-6 border-b border-subtle"
+        class="flex flex-col md:flex-row md:items-center gap-4 md:gap-7 py-6 border-b border-subtle"
       >
-        <div class="flex items-start gap-4 lg:contents">
+        <div class="flex items-start gap-4 md:contents">
           <!-- Date block -->
           <div class="w-16 bg-card rounded-[10px] flex flex-col items-center py-2 shrink-0">
             <span class="font-heading text-[30px] font-bold text-amber leading-none">{{ evt.day }}</span>
@@ -52,7 +52,7 @@ const past = computed(() => events.filter(e => !e.upcoming))
         <!-- Details button -->
         <NuxtLink
           :to="`/events/${evt.id}`"
-          class="font-body text-[13px] font-bold text-on-amber bg-amber rounded-[10px] py-[10px] px-5 shrink-0 text-center w-full lg:w-auto hover:opacity-90 transition-opacity"
+          class="font-body text-[13px] font-bold text-on-amber bg-amber rounded-[10px] py-[10px] px-5 shrink-0 text-center w-full md:w-auto hover:opacity-90 transition-opacity"
         >
           Details
         </NuxtLink>

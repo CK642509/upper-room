@@ -43,9 +43,22 @@ The site is **mobile-first**: unprefixed utility classes describe the mobile lay
 
 Conventions when building or editing pages:
 - Write base classes for mobile, then add `lg:` overrides for desktop — e.g. `flex flex-col lg:flex-row`, `px-5 lg:px-20`, `text-[44px] lg:text-[80px]`.
-- The default Tailwind breakpoints are used; only `lg` (1024px) is the active breakpoint. Tablets (768–1023px) intentionally get the mobile layout, since the desktop design needs a wide viewport. Use `md:` only if a tablet-specific layout is genuinely needed.
-- To keep desktop and mobile sharing one DOM, prefer responsive classes over duplicated markup. The `lg:contents` trick (on `events/index.vue`) lets a mobile wrapper `<div>` collapse on desktop so its children rejoin the parent flex row.
-- `AppNavbar.vue` swaps the desktop nav links + CTA for a hamburger dropdown below `lg`; the menu open state lives in the component.
+- `lg` (1024px) is the **default** desktop breakpoint: tablets (768–1023px) get the mobile layout, since the wide desktop design needs room.
+- To keep desktop and mobile sharing one DOM, prefer responsive classes over duplicated markup. The `md:contents` trick (on `events/index.vue`) lets a mobile wrapper `<div>` collapse at its breakpoint so its children rejoin the parent flex row.
+
+### Tablet (`md`, 768px) overrides
+
+Some areas were intentionally promoted to switch at `md` so tablets get the **desktop** look instead of the mobile one. Standard page horizontal padding at tablet is `px-20` (80px) — keep promoted sections aligned to that. Current `md:` promotions:
+
+- **`AppNavbar.vue`** — bar height `md:h-[72px]`, logo `md:w-12 md:h-12`, brand name `md:text-xl`. The nav links + CTA vs. hamburger dropdown still switch at `lg` (tablet keeps the hamburger), and bar padding stays `lg:px-16`.
+- **Homepage Hero** ("Feel at Home") — `md:` throughout (layout, padding `md:pl-20`, buttons row). Heading is three-step: `text-[44px] md:text-[64px] lg:text-[80px]` so 80px doesn't crowd the tablet width.
+- **Homepage Rooms Preview** ("Choose Your Room") — `md:` throughout, including padding `md:px-20`, title `md:text-[40px]`, and the room rows going horizontal (`md:flex-row`).
+- **Homepage Events Preview** ("Join the Community") — section padding `md:px-20`, title `md:text-[40px]`, and the header's "All Events" button moves to the right at `md` (`md:flex-row`/`md:justify-between`), matching Rooms Preview. The 3 event cards still go side-by-side only at `lg` (`lg:flex-row`).
+- **Homepage About** ("WHO WE ARE") — text column horizontal padding `md:px-20` and the overlay quote's left offset `md:left-20`, so its content aligns to 80px at tablet. The image/text columns still go side-by-side only at `lg` (`lg:flex-row`).
+- **Homepage Contact** ("Ready to move in?") — horizontal padding `md:px-20`. Title + buttons still stack until `lg`.
+- **`/events` Upcoming rows** — row layout only (`md:flex-row`, `md:contents`, button `md:w-auto`); the section's horizontal padding stays `px-5 lg:px-20` so the left edge stays aligned with the unchanged header and Past Events sections.
+
+When editing any of the above, keep its breakpoints consistent with the notes here. Everything not listed (Stats Bar, Events/Rooms list pages, detail pages, etc.) uses the default `lg` breakpoint.
 
 ## Critical: Tailwind integration
 

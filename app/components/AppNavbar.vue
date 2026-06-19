@@ -13,14 +13,14 @@ function closeMenu() {
 </script>
 
 <template>
-  <nav class="relative w-full h-16 lg:h-[72px] bg-base px-5 lg:px-16 flex items-center justify-between">
+  <nav class="relative w-full h-16 md:h-[72px] bg-base px-5 lg:px-16 flex items-center justify-between">
     <NuxtLink to="/" class="flex items-center gap-2 lg:gap-[10px] min-w-0" @click="closeMenu">
       <img
         src="/logo.jpg"
         alt="Upper Room Taipei Housing"
-        class="w-9 h-9 lg:w-12 lg:h-12 rounded-md object-cover shrink-0"
+        class="w-9 h-9 md:w-12 md:h-12 rounded-md object-cover shrink-0"
       />
-      <span class="font-heading text-base lg:text-xl font-bold text-primary truncate">Upper Room Taipei Housing</span>
+      <span class="font-heading text-base md:text-xl font-bold text-primary truncate">Upper Room Taipei Housing</span>
     </NuxtLink>
 
     <!-- Desktop nav links -->
