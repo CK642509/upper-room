@@ -12,7 +12,7 @@ if (!event.value) {
 <template>
   <main v-if="event">
     <!-- Hero -->
-    <section class="relative overflow-hidden h-[400px]">
+    <section class="relative overflow-hidden h-[420px] lg:h-[400px]">
       <img
         :src="event.heroImage || event.image"
         :alt="event.name"
@@ -26,14 +26,14 @@ if (!event.value) {
       <!-- Back button -->
       <NuxtLink
         to="/events"
-        class="absolute top-6 left-20 z-10 font-body text-[13px] font-semibold text-primary rounded-full py-2 px-4 hover:opacity-80 transition-opacity"
+        class="absolute top-6 left-5 lg:left-20 z-10 font-body text-[13px] font-semibold text-primary rounded-full py-2 px-4 hover:opacity-80 transition-opacity"
         style="background: rgba(13,24,41,0.53)"
       >
         ← All Events
       </NuxtLink>
 
       <!-- Hero content -->
-      <div class="absolute z-10 left-20 bottom-16 flex flex-col gap-4">
+      <div class="absolute z-10 left-5 right-5 lg:left-20 lg:right-auto bottom-12 lg:bottom-16 flex flex-col gap-4">
         <div class="flex items-center gap-3">
           <span
             class="font-body text-[13px] font-bold text-primary bg-coral rounded-full py-1.5 px-4"
@@ -53,23 +53,20 @@ if (!event.value) {
             UPCOMING
           </span>
         </div>
-        <h1
-          class="font-heading font-bold text-primary leading-[1.05]"
-          style="font-size: 56px"
-        >
+        <h1 class="font-heading font-bold text-primary leading-[1.05] text-[36px] lg:text-[56px]">
           {{ event.name }}
         </h1>
-        <p class="font-body text-[17px] font-normal text-secondary leading-[1.6]">
+        <p class="font-body text-[15px] lg:text-[17px] font-normal text-secondary leading-[1.6]">
           {{ event.tagline }}
         </p>
       </div>
     </section>
 
     <!-- Body Area -->
-    <section class="w-full flex bg-base">
+    <section class="w-full flex flex-col lg:flex-row bg-base">
       <!-- Left column -->
-      <div class="w-[860px] flex flex-col gap-8 py-12 px-20 pb-16">
-        <h2 class="font-heading text-[26px] font-bold text-primary">About this event</h2>
+      <div class="w-full lg:w-[860px] flex flex-col gap-6 lg:gap-8 py-8 lg:py-12 px-5 lg:px-20 pb-8 lg:pb-16">
+        <h2 class="font-heading text-[24px] lg:text-[26px] font-bold text-primary">About this event</h2>
         <div class="font-body text-[15px] font-normal text-secondary leading-[1.85]">
           <p
             v-for="(paragraph, i) in (event.fullAbout || event.description).split('\n\n')"
@@ -86,32 +83,32 @@ if (!event.value) {
             PHOTOS FROM THE EVENT
           </p>
           <!-- Row 1 -->
-          <div class="flex gap-3">
+          <div class="flex flex-col lg:flex-row gap-3">
             <img
               v-for="(img, i) in event.gallery.slice(0, 3)"
               :key="i"
               :src="img"
               :alt="`Event photo ${i + 1}`"
-              class="w-[220px] h-[160px] object-cover rounded-[10px]"
+              class="w-full lg:w-[220px] h-[200px] lg:h-[160px] object-cover rounded-[10px]"
             />
           </div>
           <!-- Row 2 -->
-          <div v-if="event.gallery.length > 3" class="flex gap-3">
+          <div v-if="event.gallery.length > 3" class="flex flex-col lg:flex-row gap-3">
             <img
               v-for="(img, i) in event.gallery.slice(3)"
               :key="i"
               :src="img"
               :alt="`Event photo ${i + 4}`"
-              class="h-[140px] object-cover rounded-[10px]"
-              :style="{ width: event.gallery.length - 3 === 1 ? '100%' : '336px' }"
+              class="w-full h-[200px] lg:h-[140px] object-cover rounded-[10px]"
+              :class="event.gallery.length - 3 === 1 ? 'lg:w-full' : 'lg:w-[336px]'"
             />
           </div>
         </div>
       </div>
 
       <!-- Right column -->
-      <div class="flex-1 py-12 pr-16 pb-16">
-        <div v-if="event.details" class="w-full bg-raised rounded-[16px] flex flex-col gap-5 p-7">
+      <div class="w-full lg:flex-1 py-0 lg:py-12 px-5 lg:px-0 lg:pr-16 pb-12 lg:pb-16">
+        <div v-if="event.details" class="w-full bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-7">
           <h3 class="font-heading text-[22px] font-bold text-primary">Event Details</h3>
 
           <div

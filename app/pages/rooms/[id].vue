@@ -12,7 +12,7 @@ if (!room.value) {
 <template>
   <main v-if="room">
     <!-- Photo Hero -->
-    <section class="relative overflow-hidden h-[480px]">
+    <section class="relative overflow-hidden h-[340px] lg:h-[480px]">
       <img
         :src="room.detailImage"
         :alt="room.name"
@@ -26,27 +26,27 @@ if (!room.value) {
       <!-- Back link -->
       <NuxtLink
         to="/rooms"
-        class="absolute top-6 left-20 z-10 font-body text-[13px] font-semibold text-primary bg-[rgba(13,24,41,0.60)] rounded-full py-2 px-4 flex items-center gap-1.5 hover:bg-[rgba(13,24,41,0.80)] transition-colors"
+        class="absolute top-6 left-5 lg:left-20 z-10 font-body text-[13px] font-semibold text-primary bg-[rgba(13,24,41,0.60)] rounded-full py-2 px-4 flex items-center gap-1.5 hover:bg-[rgba(13,24,41,0.80)] transition-colors"
       >
         ← All Rooms
       </NuxtLink>
 
       <!-- Thumbnails -->
-      <div v-if="room.thumbs.length" class="absolute bottom-[100px] left-20 z-10 flex gap-2">
+      <div v-if="room.thumbs.length" class="absolute bottom-6 left-5 lg:bottom-[100px] lg:left-20 z-10 flex gap-2">
         <img
           v-for="(thumb, i) in room.thumbs"
           :key="i"
           :src="thumb"
           :alt="`${room.name} photo ${i + 1}`"
-          class="w-[100px] h-[70px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity"
+          class="w-[100px] h-[64px] lg:h-[70px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
     </section>
 
     <!-- Detail Area -->
-    <section class="w-full flex bg-base">
+    <section class="w-full flex flex-col lg:flex-row bg-base">
       <!-- Left Column -->
-      <div class="w-[860px] flex flex-col gap-8 py-12 px-20 pb-16">
+      <div class="w-full lg:w-[860px] flex flex-col gap-6 lg:gap-8 py-8 lg:py-12 px-5 lg:px-20 pb-8 lg:pb-16">
         <!-- Tag row -->
         <div class="flex items-center gap-2.5">
           <p class="font-body text-[11px] font-bold text-amber tracking-[3px] uppercase">{{ room.type }}</p>
@@ -61,10 +61,10 @@ if (!room.value) {
         </div>
 
         <!-- Room title -->
-        <h1 class="font-heading text-[52px] font-bold text-primary">{{ room.name }}</h1>
+        <h1 class="font-heading text-[40px] lg:text-[52px] font-bold text-primary">{{ room.name }}</h1>
 
         <!-- Meta row -->
-        <div class="flex gap-10">
+        <div class="grid grid-cols-2 gap-4 lg:flex lg:gap-10">
           <div class="flex flex-col gap-1">
             <p class="font-body text-[10px] font-bold text-muted tracking-[2px] uppercase">LOCATION</p>
             <p class="font-body text-[15px] font-semibold text-primary">{{ room.locationShort }}</p>
@@ -96,8 +96,8 @@ if (!room.value) {
       </div>
 
       <!-- Right Column -->
-      <div class="flex-1 py-12 pr-16 pb-16">
-        <div class="w-full bg-raised rounded-[16px] flex flex-col gap-5 p-8">
+      <div class="w-full lg:flex-1 py-0 lg:py-12 px-5 lg:px-0 lg:pr-16 pb-12 lg:pb-16">
+        <div class="w-full bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-8">
           <h3 class="font-heading text-[26px] font-bold text-primary">Interested?</h3>
           <p class="font-body text-sm font-normal text-secondary leading-[1.6]">
             We'll get back to you within 24 hours to arrange a viewing.
