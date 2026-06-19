@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const {data: roomsData} = await useRoomsList()
-const previewRooms = computed(() => (roomsData.value ?? []).slice(0, 2))
+const previewRooms = computed(() => (roomsData.value ?? []).slice(0, 3))
 const {data: previewEventsData} = await useUpcomingEvents()
 const previewEvents = computed(() => previewEventsData.value ?? [])
 const urlFor = useSanityImageUrl()
