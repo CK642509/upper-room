@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { events } from '~/composables/useData'
+import { PortableText } from '@portabletext/vue'
 
 const route = useRoute()
-const event = computed(() => events.find(e => e.id === route.params.id))
+const {data: event} = await useEvent(route.params.id as string)
 
 if (!event.value) {
   throw createError({ statusCode: 404, message: 'Event not found' })
 }
+
+const urlFor = useSanityImageUrl()
+
+const details = computed(() => {
+  const e = event.value
+  if (!e) return []
+  return [
+    { label: 'Date', value: eventFullDate(e.startDateTime), icon: '📅' },
+    { label: 'Time', value: eventTimeRange(e.startDateTime, e.endDateTime), icon: '🕐' },
+    { label: 'Venue', value: e.venue, icon: '📍' },
+    { label: 'Organizer', value: e.organizer, icon: '👥' },
+    { label: 'Attendees', value: e.attendees, icon: '🌐' },
+  ].filter(d => d.value)
+})
 </script>
 
 <template>
@@ -14,8 +28,8 @@ if (!event.value) {
     <!-- Hero -->
     <section class="relative overflow-hidden h-[420px] lg:h-[400px]">
       <img
-        :src="event.heroImage || event.image"
-        :alt="event.name"
+        :src="urlFor(event.heroImage || event.mainImage).width(1600).height(800).fit('crop').auto('format').url()"
+        :alt="(event.heroImage || event.mainImage).alt || event.title"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -38,7 +52,7 @@ if (!event.value) {
           <span
             class="font-body text-[13px] font-bold text-primary bg-coral rounded-full py-1.5 px-4"
           >
-            {{ event.fullDate }}
+            {{ eventFullDate(event.startDateTime) }}
           </span>
           <span
             v-if="!event.upcoming"
@@ -54,7 +68,7 @@ if (!event.value) {
           </span>
         </div>
         <h1 class="font-heading font-bold text-primary leading-[1.05] text-[36px] lg:text-[56px]">
-          {{ event.name }}
+          {{ event.title }}
         </h1>
         <p class="font-body text-[15px] lg:text-[17px] font-normal text-secondary leading-[1.6]">
           {{ event.tagline }}
@@ -67,14 +81,9 @@ if (!event.value) {
       <!-- Left column -->
       <div class="w-full lg:w-[860px] lg:min-w-0 flex flex-col gap-6 lg:gap-8 py-8 lg:py-12 px-5 lg:px-20 pb-8 lg:pb-16">
         <h2 class="font-heading text-[24px] lg:text-[26px] font-bold text-primary">About this event</h2>
-        <div class="font-body text-[15px] font-normal text-secondary leading-[1.85]">
-          <p
-            v-for="(paragraph, i) in (event.fullAbout || event.description).split('\n\n')"
-            :key="i"
-            :class="i > 0 ? 'mt-4' : ''"
-          >
-            {{ paragraph }}
-          </p>
+        <div class="font-body text-[15px] font-normal text-secondary leading-[1.85] [&_p]:mt-4 [&_p:first-child]:mt-0 [&_a]:text-amber [&_a]:underline">
+          <PortableText v-if="event.body?.length" :value="event.body" />
+          <p v-else>{{ event.description }}</p>
         </div>
 
         <!-- Photo gallery -->
@@ -86,9 +95,9 @@ if (!event.value) {
           <div class="flex flex-col lg:flex-row gap-3">
             <img
               v-for="(img, i) in event.gallery.slice(0, 3)"
-              :key="i"
-              :src="img"
-              :alt="`Event photo ${i + 1}`"
+              :key="img._key ?? i"
+              :src="urlFor(img).width(440).height(320).fit('crop').auto('format').url()"
+              :alt="img.alt || `Event photo ${i + 1}`"
               class="w-full lg:w-[220px] h-[200px] lg:h-[160px] object-cover rounded-[10px]"
             />
           </div>
@@ -96,9 +105,9 @@ if (!event.value) {
           <div v-if="event.gallery.length > 3" class="flex flex-col lg:flex-row gap-3">
             <img
               v-for="(img, i) in event.gallery.slice(3)"
-              :key="i"
-              :src="img"
-              :alt="`Event photo ${i + 4}`"
+              :key="img._key ?? i"
+              :src="urlFor(img).width(680).height(280).fit('crop').auto('format').url()"
+              :alt="img.alt || `Event photo ${i + 4}`"
               class="w-full h-[200px] lg:h-[140px] object-cover rounded-[10px]"
               :class="event.gallery.length - 3 === 1 ? 'lg:w-full' : 'lg:w-[336px]'"
             />
@@ -108,23 +117,17 @@ if (!event.value) {
 
       <!-- Right column -->
       <div class="w-full lg:flex-1 py-0 lg:py-12 px-5 lg:px-0 lg:pr-16 pb-12 lg:pb-16">
-        <div v-if="event.details" class="w-full lg:min-w-[400px] bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-7">
+        <div v-if="details.length" class="w-full lg:min-w-[400px] bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-7">
           <h3 class="font-heading text-[22px] font-bold text-primary">Event Details</h3>
 
           <div
-            v-for="(item, key) in [
-              { label: 'Date', value: event.details.date },
-              { label: 'Time', value: event.details.time },
-              { label: 'Venue', value: event.details.venue },
-              { label: 'Organizer', value: event.details.organizer },
-              { label: 'Attendees', value: event.details.attendees },
-            ]"
-            :key="key"
+            v-for="item in details"
+            :key="item.label"
             class="flex gap-4 pb-4 border-b border-subtle last:border-0 last:pb-0"
           >
             <div class="w-8 h-8 rounded-[10px] bg-card flex items-center justify-center shrink-0 mt-0.5">
               <span class="text-[14px]">
-                {{ ['📅', '🕐', '📍', '👥', '🌐'][key] }}
+                {{ item.icon }}
               </span>
             </div>
             <div class="flex flex-col gap-0.5">

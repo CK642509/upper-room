@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { rooms, events } from '~/composables/useData'
+import { rooms } from '~/composables/useData'
 
 const previewRooms = rooms.slice(0, 2)
-const previewEvents = events.filter(e => e.upcoming).slice(0, 3)
+const {data: previewEventsData} = await useUpcomingEvents()
+const previewEvents = computed(() => previewEventsData.value ?? [])
+const urlFor = useSanityImageUrl()
 </script>
 
 <template>
@@ -172,12 +174,12 @@ const previewEvents = events.filter(e => e.upcoming).slice(0, 3)
       <div class="flex flex-col lg:flex-row gap-5">
         <NuxtLink
           v-for="evt in previewEvents"
-          :key="evt.id"
-          :to="`/events/${evt.id}`"
+          :key="evt._id"
+          :to="`/events/${evt.slug}`"
           class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all"
         >
           <div class="relative h-[170px] lg:h-[160px] overflow-hidden">
-            <img :src="evt.image" :alt="evt.name" class="absolute inset-0 w-full h-full object-cover" />
+            <img :src="urlFor(evt.mainImage).width(600).height(340).fit('crop').auto('format').url()" :alt="evt.mainImage.alt || evt.title" class="absolute inset-0 w-full h-full object-cover" />
             <div
               class="absolute inset-0"
               style="background: linear-gradient(180deg, rgba(22,32,64,0) 0%, rgba(22,32,64,0.60) 100%)"
@@ -185,12 +187,12 @@ const previewEvents = events.filter(e => e.upcoming).slice(0, 3)
             <div
               class="absolute top-4 left-4 bg-amber rounded-[10px] flex flex-col items-center py-2 px-[14px]"
             >
-              <span class="font-heading text-[22px] font-bold text-on-amber leading-none">{{ evt.day }}</span>
-              <span class="font-body text-[9px] font-bold text-on-amber">{{ evt.month }}</span>
+              <span class="font-heading text-[22px] font-bold text-on-amber leading-none">{{ eventDay(evt.startDateTime) }}</span>
+              <span class="font-body text-[9px] font-bold text-on-amber">{{ eventMonth(evt.startDateTime) }}</span>
             </div>
           </div>
           <div class="flex flex-col gap-2 p-5 pb-6">
-            <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.name }}</h3>
+            <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.title }}</h3>
             <p class="font-body text-[13px] font-normal text-secondary leading-[1.6]">{{ evt.description }}</p>
           </div>
         </NuxtLink>
