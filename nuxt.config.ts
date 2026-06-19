@@ -23,5 +23,9 @@ export default defineNuxtConfig({
     apiVersion: process.env.SANITY_API_VERSION || '2025-01-01',
     // CDN = cached & fast (use in production); off = always fresh (use in dev).
     useCdn: process.env.SANITY_USE_CDN === 'true',
+    // Public site reads published content only. (The module defaults to `raw`,
+    // which exposes drafts and requires a token — wrong for a token-less
+    // public frontend, and would return draft+published duplicates.)
+    perspective: 'published',
   },
 })
