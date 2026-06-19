@@ -65,7 +65,7 @@ if (!event.value) {
     <!-- Body Area -->
     <section class="w-full flex flex-col lg:flex-row bg-base">
       <!-- Left column -->
-      <div class="w-full lg:w-[860px] flex flex-col gap-6 lg:gap-8 py-8 lg:py-12 px-5 lg:px-20 pb-8 lg:pb-16">
+      <div class="w-full lg:w-[860px] lg:min-w-0 flex flex-col gap-6 lg:gap-8 py-8 lg:py-12 px-5 lg:px-20 pb-8 lg:pb-16">
         <h2 class="font-heading text-[24px] lg:text-[26px] font-bold text-primary">About this event</h2>
         <div class="font-body text-[15px] font-normal text-secondary leading-[1.85]">
           <p
@@ -108,7 +108,7 @@ if (!event.value) {
 
       <!-- Right column -->
       <div class="w-full lg:flex-1 py-0 lg:py-12 px-5 lg:px-0 lg:pr-16 pb-12 lg:pb-16">
-        <div v-if="event.details" class="w-full bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-7">
+        <div v-if="event.details" class="w-full lg:min-w-[400px] bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-7">
           <h3 class="font-heading text-[22px] font-bold text-primary">Event Details</h3>
 
           <div

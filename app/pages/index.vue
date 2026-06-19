@@ -170,10 +170,11 @@ const previewEvents = events.filter(e => e.upcoming).slice(0, 3)
       </div>
 
       <div class="flex flex-col lg:flex-row gap-5">
-        <div
+        <NuxtLink
           v-for="evt in previewEvents"
           :key="evt.id"
-          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col"
+          :to="`/events/${evt.id}`"
+          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all"
         >
           <div class="relative h-[170px] lg:h-[160px] overflow-hidden">
             <img :src="evt.image" :alt="evt.name" class="absolute inset-0 w-full h-full object-cover" />
@@ -192,7 +193,7 @@ const previewEvents = events.filter(e => e.upcoming).slice(0, 3)
             <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.name }}</h3>
             <p class="font-body text-[13px] font-normal text-secondary leading-[1.6]">{{ evt.description }}</p>
           </div>
-        </div>
+        </NuxtLink>
       </div>
     </section>
 
