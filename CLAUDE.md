@@ -37,6 +37,16 @@ tailwind.config.ts     # Design token definitions (colors, fonts, radii)
 
 **Styling:** Tailwind CSS v3 via `@nuxtjs/tailwindcss` module. Custom design tokens in `tailwind.config.ts` map directly to the `.pen` design file variables: `bg-base`, `bg-raised`, `bg-card`, `bg-amber`, `bg-coral`, `text-primary`, `text-secondary`, `text-muted`, `text-on-amber`, `border-subtle`, `font-heading` (Fraunces), `font-body` (DM Sans), `rounded-md` (10px), `rounded-lg` (16px).
 
+## Responsive design
+
+The site is **mobile-first**: unprefixed utility classes describe the mobile layout (≈390px, matching the mobile frames in the `.pen` design file), and the **`lg:` prefix (≥1024px) restores the desktop layout** (≈1440px, matching the desktop frames). This split maps to the two widths designed in `upper_room_style2-1-1.pen`.
+
+Conventions when building or editing pages:
+- Write base classes for mobile, then add `lg:` overrides for desktop — e.g. `flex flex-col lg:flex-row`, `px-5 lg:px-20`, `text-[44px] lg:text-[80px]`.
+- The default Tailwind breakpoints are used; only `lg` (1024px) is the active breakpoint. Tablets (768–1023px) intentionally get the mobile layout, since the desktop design needs a wide viewport. Use `md:` only if a tablet-specific layout is genuinely needed.
+- To keep desktop and mobile sharing one DOM, prefer responsive classes over duplicated markup. The `lg:contents` trick (on `events/index.vue`) lets a mobile wrapper `<div>` collapse on desktop so its children rejoin the parent flex row.
+- `AppNavbar.vue` swaps the desktop nav links + CTA for a hamburger dropdown below `lg`; the menu open state lives in the component.
+
 ## Critical: Tailwind integration
 
 Do **not** use `@tailwindcss/vite` or import it in `nuxt.config.ts`. It is incompatible with Nuxt 4's Rolldown bundler on Windows and causes a "Class extends value undefined" crash. Always use the `@nuxtjs/tailwindcss` module approach (listed in `modules` array in `nuxt.config.ts`). Similarly, `tailwindcss` must stay at v3 — v4 has the same Rolldown incompatibility.
