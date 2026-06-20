@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/scripts": "^1.2.1",
+    "@unhead/vue": "^2.1.15",
     "@nuxtjs/sanity": "^2.3.0",
     "@portabletext/vue": "^1.0.14",
     "@sanity/image-url": "^2.1.1",
