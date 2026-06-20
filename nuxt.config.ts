@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity', '@vercel/analytics'],
   css: ['~/assets/css/main.css'],
   tailwindcss: {
     configPath: 'tailwind.config.ts',
