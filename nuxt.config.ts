@@ -9,7 +9,11 @@ export default defineNuxtConfig({
       ],
     },
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity', '@nuxt/scripts'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/sanity',
+    '@nuxt/scripts',
+  ],
   css: ['~/assets/css/main.css'],
   tailwindcss: {
     configPath: 'tailwind.config.ts',
