@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     registry: {
       vercelAnalytics: {
         trigger: 'onNuxtReady',
-      }
-    }
-  }
+      },
+    },
+  },
 })
