@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sanity', '@nuxt/scripts'],
   css: ['~/assets/css/main.css'],
   tailwindcss: {
     configPath: 'tailwind.config.ts',
@@ -28,4 +28,11 @@ export default defineNuxtConfig({
     // public frontend, and would return draft+published duplicates.)
     perspective: 'published',
   },
+  scripts: {
+    registry: {
+      vercelAnalytics: {
+        trigger: 'onNuxtReady',
+      }
+    }
+  }
 })
