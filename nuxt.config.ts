@@ -39,4 +39,12 @@ export default defineNuxtConfig({
       },
     },
   },
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@sanity/client',
+        '@sanity/image-url',
+      ],
+    },
+  },
 })
