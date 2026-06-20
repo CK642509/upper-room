@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { rooms } from '~/composables/useData'
+const {data} = await useRoomsList()
+const rooms = computed(() => data.value ?? [])
+const urlFor = useSanityImageUrl()
 </script>
 
 <template>
@@ -28,20 +30,20 @@ import { rooms } from '~/composables/useData'
     <section class="w-full bg-base py-9 lg:py-12 px-5 lg:px-20 flex flex-col gap-5 lg:gap-0">
       <div
         v-for="room in rooms"
-        :key="room.id"
+        :key="room._id"
         class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-7 lg:py-7 lg:border-b lg:border-subtle"
       >
         <img
-          :src="room.listImage"
-          :alt="room.name"
+          :src="urlFor(room.mainImage).width(480).height(312).fit('crop').auto('format').url()"
+          :alt="room.mainImage.alt || room.title"
           class="w-full lg:w-[240px] h-[200px] lg:h-[156px] object-cover rounded-[10px] shrink-0"
         />
         <div class="flex-1 flex flex-col gap-2">
-          <h3 class="font-heading text-[24px] font-bold text-primary">{{ room.name }}</h3>
-          <p class="font-body text-[13px] font-normal text-muted">📍 {{ room.location }}</p>
+          <h3 class="font-heading text-[24px] font-bold text-primary">{{ room.title }}</h3>
+          <p class="font-body text-[13px] font-normal text-muted">📍 {{ roomLocation(room) }}</p>
           <p class="font-body text-sm font-normal text-secondary leading-[1.6]">{{ room.description }}</p>
           <div class="flex items-center gap-3 mt-1">
-            <span class="font-heading text-[22px] font-bold text-amber">{{ room.priceDisplay }}</span>
+            <span class="font-heading text-[22px] font-bold text-amber">{{ roomPriceDisplay(room.price) }}</span>
             <span
               :class="room.status === 'available'
                 ? 'bg-available-bg text-available'
@@ -53,7 +55,7 @@ import { rooms } from '~/composables/useData'
           </div>
         </div>
         <NuxtLink
-          :to="`/rooms/${room.id}`"
+          :to="`/rooms/${room.slug}`"
           :class="room.status === 'available'
             ? 'bg-amber text-on-amber hover:opacity-90'
             : 'bg-card text-muted hover:bg-subtle'"

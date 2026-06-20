@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { events } from '~/composables/useData'
-
-const upcoming = computed(() => events.filter(e => e.upcoming))
-const past = computed(() => events.filter(e => !e.upcoming))
+const {data} = await useEventsIndex()
+const upcoming = computed(() => data.value?.upcoming ?? [])
+const past = computed(() => data.value?.past ?? [])
+const urlFor = useSanityImageUrl()
 </script>
 
 <template>
@@ -27,22 +27,22 @@ const past = computed(() => events.filter(e => !e.upcoming))
       <!-- Event rows -->
       <div
         v-for="evt in upcoming"
-        :key="evt.id"
+        :key="evt._id"
         class="flex flex-col md:flex-row md:items-center gap-4 md:gap-7 py-6 border-b border-subtle"
       >
         <div class="flex items-start gap-4 md:contents">
           <!-- Date block -->
           <div class="w-16 bg-card rounded-[10px] flex flex-col items-center py-2 shrink-0">
-            <span class="font-heading text-[30px] font-bold text-amber leading-none">{{ evt.day }}</span>
-            <span class="font-body text-[10px] font-bold text-muted mt-0.5">{{ evt.month }}</span>
+            <span class="font-heading text-[30px] font-bold text-amber leading-none">{{ eventDay(evt.startDateTime) }}</span>
+            <span class="font-body text-[10px] font-bold text-muted mt-0.5">{{ eventMonth(evt.startDateTime) }}</span>
           </div>
 
           <!-- Info -->
           <div class="flex-1 flex flex-col gap-1.5">
             <div class="flex items-center gap-2.5">
-              <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.name }}</h3>
+              <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.title }}</h3>
               <span class="font-body text-[11px] font-semibold text-muted bg-card rounded-full py-1 px-2.5 shrink-0">
-                {{ evt.type }}
+                {{ evt.category }}
               </span>
             </div>
             <p class="font-body text-[13px] font-normal text-secondary leading-[1.6]">{{ evt.description }}</p>
@@ -51,7 +51,7 @@ const past = computed(() => events.filter(e => !e.upcoming))
 
         <!-- Details button -->
         <NuxtLink
-          :to="`/events/${evt.id}`"
+          :to="`/events/${evt.slug}`"
           class="font-body text-[13px] font-bold text-on-amber bg-amber rounded-[10px] py-[10px] px-5 shrink-0 text-center w-full md:w-auto hover:opacity-90 transition-opacity"
         >
           Details
@@ -71,19 +71,19 @@ const past = computed(() => events.filter(e => !e.upcoming))
       <div class="flex flex-col lg:flex-row gap-5 pt-5">
         <div
           v-for="evt in past"
-          :key="evt.id"
+          :key="evt._id"
           class="flex-1 bg-card rounded-[10px] overflow-hidden flex flex-col"
         >
           <img
-            :src="evt.image"
-            :alt="evt.name"
+            :src="urlFor(evt.mainImage).width(600).height(320).fit('crop').auto('format').url()"
+            :alt="evt.mainImage.alt || evt.title"
             class="w-full h-[180px] lg:h-[160px] object-cover"
           />
           <div class="flex flex-col gap-1.5 p-4 pb-5">
-            <p class="font-body text-xs font-normal text-muted">{{ evt.fullDate }}</p>
-            <h3 class="font-heading text-[17px] font-bold text-primary">{{ evt.name }}</h3>
+            <p class="font-body text-xs font-normal text-muted">{{ eventFullDate(evt.startDateTime) }}</p>
+            <h3 class="font-heading text-[17px] font-bold text-primary">{{ evt.title }}</h3>
             <NuxtLink
-              :to="`/events/${evt.id}`"
+              :to="`/events/${evt.slug}`"
               class="font-body text-xs font-semibold text-amber hover:underline"
             >
               View photos →
