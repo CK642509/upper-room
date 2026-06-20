@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const {data: roomsData} = await useRoomsList()
-const previewRooms = computed(() => (roomsData.value ?? []).slice(0, 3))
+const {data: roomsData} = await usePreviewRooms()
+const previewRooms = computed(() => roomsData.value ?? [])
 const {data: previewEventsData} = await useUpcomingEvents()
 const previewEvents = computed(() => previewEventsData.value ?? [])
 const urlFor = useSanityImageUrl()
@@ -175,7 +175,7 @@ const urlFor = useSanityImageUrl()
           v-for="evt in previewEvents"
           :key="evt._id"
           :to="`/events/${evt.slug}`"
-          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all"
+          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-[transform,box-shadow]"
         >
           <div class="relative h-[170px] lg:h-[160px] overflow-hidden">
             <img :src="urlFor(evt.mainImage).width(600).height(340).fit('crop').auto('format').url()" :alt="evt.mainImage.alt || evt.title" class="absolute inset-0 w-full h-full object-cover" />
