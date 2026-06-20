@@ -17,23 +17,36 @@ Nuxt 4 project with `app/` as the source directory (Nuxt 4 default `srcDir`). Al
 
 ```
 app/
-  app.vue              # Root: <NuxtLayout> + <NuxtPage>
-  layouts/default.vue  # Wraps every page with <AppNavbar> + dark bg
+  app.vue                    # Root: <NuxtLayout> + <NuxtPage>
+  layouts/default.vue        # Wraps every page with <AppNavbar> + dark bg
   components/
-    AppNavbar.vue      # Logo, nav links (Rooms/Events/Contact), CTA button
+    AppNavbar.vue            # Logo, nav links (Rooms/Events/Contact), CTA button
   composables/
-    useData.ts         # All static data — Room[] and Event[] arrays + helper functions
+    useRooms.ts              # GROQ queries: useRoomsList / usePreviewRooms / useRoom(slug)
+    useEvents.ts             # GROQ queries: useEventsIndex / useUpcomingEvents / useEvent(slug)
+    useSanityImageUrl.ts     # urlFor(source) image-URL builder for Sanity images
+  types/
+    room.ts                  # RoomCard / RoomDetail
+    event.ts                 # EventCard / EventDetail
+  utils/
+    roomFormat.ts            # roomLocation / roomPriceDisplay / roomAvailability … (auto-imported)
+    eventFormat.ts           # eventDay / eventFullDate / eventTimeRange … (auto-imported)
   pages/
-    index.vue          # Homepage (Hero, Stats, About, Rooms preview, Events preview, Contact)
-    rooms/index.vue    # Full room listing
-    rooms/[id].vue     # Room detail with photo hero, meta, CTA card
-    events/index.vue   # Upcoming + past events
-    events/[id].vue    # Event detail with gallery and details sidebar
-  assets/css/main.css  # Google Fonts import + base html/body styles only
-tailwind.config.ts     # Design token definitions (colors, fonts, radii)
+    index.vue                # Homepage (Hero, Stats, About, Rooms preview, Events preview, Contact)
+    rooms/index.vue          # Full room listing
+    rooms/[id].vue           # Room detail with photo hero, meta, CTA card
+    events/index.vue         # Upcoming + past events
+    events/[id].vue          # Event detail with gallery and details sidebar
+  assets/css/main.css        # Google Fonts import + base html/body styles only
+tailwind.config.ts           # Design token definitions (colors, fonts, radii)
 ```
 
-**Data layer:** All content (rooms, events) is hardcoded in `app/composables/useData.ts` as exported TypeScript arrays. Pages import directly — no API, no store. Room IDs are kebab-case strings used as route params (`studio-a`, `double-room-b`, `single-room-c`). Event IDs follow the same pattern.
+**Data layer:** Content (rooms, events) lives in **Sanity** and is fetched with GROQ via the `@nuxtjs/sanity` module. Pages call composables that wrap `useSanityQuery` — no local store, no hardcoded arrays. Connection config is in `nuxt.config.ts` under `sanity` (driven by `SANITY_*` env vars; see `.env.example`), reading the `published` perspective only.
+
+- **Composables** (`useRooms.ts`, `useEvents.ts`) centralize all GROQ. Each defines `CARD_FIELDS` (list/preview projection) and `DETAIL_FIELDS` (`CARD_FIELDS` + detail-only fields) so list and detail queries stay consistent. Preview queries (`usePreviewRooms`, `useUpcomingEvents`) slice server-side with `[0...3]` — prefer adding a limited query over fetching all + slicing client-side.
+- **Routing by slug:** detail routes are `rooms/[id].vue` and `events/[id].vue`, but `route.params.id` is the Sanity **slug** (`slug.current`), *not* the document `_id`. The `[id]` filename is kept for route stability; queries filter on `slug.current == $slug`. Each detail page has an inline note to this effect.
+- **Images:** `useSanityImageUrl()` returns `urlFor(source)`; build URLs with `.width().height().fit('crop').auto('format').url()`. Rich text (`body`) renders via `@portabletext/vue`'s `<PortableText>`, with a plain-text `description` fallback.
+- **Formatting helpers** live in `app/utils/` and are auto-imported (Nuxt convention) — no explicit import needed in pages.
 
 **Styling:** Tailwind CSS v3 via `@nuxtjs/tailwindcss` module. Custom design tokens in `tailwind.config.ts` map directly to the `.pen` design file variables: `bg-base`, `bg-raised`, `bg-card`, `bg-amber`, `bg-coral`, `text-primary`, `text-secondary`, `text-muted`, `text-on-amber`, `border-subtle`, `font-heading` (Fraunces), `font-body` (DM Sans), `rounded-md` (10px), `rounded-lg` (16px).
 
