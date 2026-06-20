@@ -2,6 +2,8 @@
 import { PortableText } from '@portabletext/vue'
 
 const route = useRoute()
+// NOTE: the [id] route param is the Sanity slug (slug.current), not the document _id.
+// The file stays [id] for route stability — treat the value as a slug.
 const {data: event} = await useEvent(route.params.id as string)
 
 if (!event.value) {
