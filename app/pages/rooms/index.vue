@@ -59,7 +59,7 @@ const urlFor = useSanityImageUrl()
           :class="room.status === 'available'
             ? 'bg-amber text-on-amber hover:opacity-90'
             : 'bg-card text-muted hover:bg-subtle'"
-          class="font-body text-[13px] font-bold rounded-[10px] py-[13px] px-6 shrink-0 text-center w-full lg:w-auto transition-all"
+          class="font-body text-[13px] font-bold rounded-[10px] py-[13px] px-6 shrink-0 text-center w-full lg:w-auto transition-[opacity,background-color]"
         >
           View Room
         </NuxtLink>

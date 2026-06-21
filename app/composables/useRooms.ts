@@ -28,6 +28,13 @@ export function useRoomsList() {
   return useSanityQuery<RoomCard[]>(`*[_type == "room"] | order(price desc){${CARD_FIELDS}}`)
 }
 
+/** The first few rooms (homepage preview). */
+export function usePreviewRooms() {
+  return useSanityQuery<RoomCard[]>(
+    `*[_type == "room"] | order(price desc)[0...3]{${CARD_FIELDS}}`,
+  )
+}
+
 /** A single room by its slug. */
 export function useRoom(slug: string) {
   return useSanityQuery<RoomDetail>(

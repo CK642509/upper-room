@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const {data: roomsData} = await useRoomsList()
-const previewRooms = computed(() => (roomsData.value ?? []).slice(0, 3))
+const {data: roomsData} = await usePreviewRooms()
+const previewRooms = computed(() => roomsData.value ?? [])
 const {data: previewEventsData} = await useUpcomingEvents()
 const previewEvents = computed(() => previewEventsData.value ?? [])
 const urlFor = useSanityImageUrl()
@@ -175,7 +175,7 @@ const urlFor = useSanityImageUrl()
           v-for="evt in previewEvents"
           :key="evt._id"
           :to="`/events/${evt.slug}`"
-          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all"
+          class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-[transform,box-shadow]"
         >
           <div class="relative h-[170px] lg:h-[160px] overflow-hidden">
             <img :src="urlFor(evt.mainImage).width(600).height(340).fit('crop').auto('format').url()" :alt="evt.mainImage.alt || evt.title" class="absolute inset-0 w-full h-full object-cover" />
@@ -195,38 +195,6 @@ const urlFor = useSanityImageUrl()
             <p class="font-body text-[13px] font-normal text-secondary leading-[1.6]">{{ evt.description }}</p>
           </div>
         </NuxtLink>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="w-full bg-amber py-12 lg:py-14 px-5 md:px-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-      <div class="flex flex-col gap-2">
-        <h2 class="font-heading text-[32px] lg:text-[36px] font-bold text-on-amber">Ready to move in?</h2>
-        <p class="font-body text-[15px] font-normal" style="color: rgba(13,24,41,0.67)">
-          We reply within 24 hours. No commitment needed.
-        </p>
-      </div>
-      <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full lg:w-auto">
-        <a
-          href="https://wa.me/"
-          class="font-body text-sm font-bold text-primary bg-[#0D1829] rounded-full py-[13px] px-[22px] flex items-center justify-center gap-2 w-full lg:w-auto hover:opacity-90 transition-opacity"
-        >
-          WhatsApp
-        </a>
-        <a
-          href="#"
-          class="font-body text-sm font-bold text-primary rounded-full py-[13px] px-[22px] flex items-center justify-center gap-2 w-full lg:w-auto hover:opacity-80 transition-opacity"
-          style="background: rgba(13,24,41,0.60)"
-        >
-          Line
-        </a>
-        <a
-          href="mailto:hello@upperroom.co"
-          class="font-body text-sm font-bold text-primary rounded-full py-[13px] px-[22px] flex items-center justify-center gap-2 w-full lg:w-auto hover:opacity-80 transition-opacity"
-          style="background: rgba(13,24,41,0.40)"
-        >
-          Email
-        </a>
       </div>
     </section>
   </main>
