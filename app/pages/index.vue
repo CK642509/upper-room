@@ -136,16 +136,8 @@ const urlFor = useSanityImageUrl()
             <p class="font-heading text-[20px] font-bold text-amber">{{ roomPriceDisplay(room.price) }}</p>
           </div>
           <div class="flex flex-row md:flex-col items-center justify-between md:justify-start gap-2.5">
-            <span
-              :class="room.status === 'available'
-                ? 'bg-available-bg text-available'
-                : 'bg-rented-bg text-rented'"
-              class="font-body text-[11px] font-bold rounded-full py-1.5 px-[14px]"
-            >
-              {{ room.status === 'available' ? 'Available' : 'Rented' }}
-            </span>
             <NuxtLink
-              :to="`/rooms/${room.slug}`"
+              :to="`/rooms/${room.location.slug}/${room.slug}`"
               class="font-body text-[13px] font-semibold text-primary bg-card rounded-[10px] py-[10px] px-5 hover:bg-subtle transition-colors"
             >
               Details

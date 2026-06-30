@@ -2,14 +2,15 @@
 import { PortableText } from '@portabletext/vue'
 
 const route = useRoute()
-// NOTE: the [id] route param is the Sanity slug (slug.current), not the document _id.
-// The file stays [id] for route stability — treat the value as a slug.
-const {data: room} = await useRoom(route.params.id as string)
+// NOTE: the [room] route param is the Sanity room slug (slug.current), not the
+// document _id. Rooms are nested under their location: /rooms/[location]/[room].
+const {data: room} = await useRoom(route.params.room as string)
 
 if (!room.value) {
   throw createError({ statusCode: 404, message: 'Room not found' })
 }
 
+const locationSlug = route.params.location as string
 const urlFor = useSanityImageUrl()
 </script>
 
@@ -29,10 +30,10 @@ const urlFor = useSanityImageUrl()
 
       <!-- Back link -->
       <NuxtLink
-        to="/rooms"
+        :to="`/rooms/${locationSlug}`"
         class="absolute top-6 left-5 lg:left-20 z-10 font-body text-[13px] font-semibold text-primary bg-[rgba(13,24,41,0.60)] rounded-full py-2 px-4 flex items-center gap-1.5 hover:bg-[rgba(13,24,41,0.80)] transition-colors"
       >
-        ← All Rooms
+        ← {{ room.location.name }}
       </NuxtLink>
 
       <!-- Thumbnails -->
@@ -54,14 +55,6 @@ const urlFor = useSanityImageUrl()
         <!-- Tag row -->
         <div class="flex items-center gap-2.5">
           <p class="font-body text-[11px] font-bold text-amber tracking-[3px] uppercase">{{ room.roomType }}</p>
-          <span
-            :class="room.status === 'available'
-              ? 'bg-available-bg text-available'
-              : 'bg-rented-bg text-rented'"
-            class="font-body text-[11px] font-bold rounded-full py-1 px-3"
-          >
-            {{ room.status === 'available' ? 'Available' : 'Rented' }}
-          </span>
         </div>
 
         <!-- Room title -->
@@ -71,15 +64,11 @@ const urlFor = useSanityImageUrl()
         <div class="grid grid-cols-2 gap-4 lg:flex lg:gap-10">
           <div class="flex flex-col gap-1">
             <p class="font-body text-[10px] font-bold text-muted tracking-[2px] uppercase">LOCATION</p>
-            <p class="font-body text-[15px] font-semibold text-primary">{{ roomLocationShort(room) }}</p>
+            <p class="font-body text-[15px] font-semibold text-primary">{{ roomLocation(room) }}</p>
           </div>
           <div class="flex flex-col gap-1">
             <p class="font-body text-[10px] font-bold text-muted tracking-[2px] uppercase">MONTHLY RENT</p>
             <p class="font-body text-[15px] font-semibold text-primary">{{ roomPrice(room.price) }}</p>
-          </div>
-          <div class="flex flex-col gap-1">
-            <p class="font-body text-[10px] font-bold text-muted tracking-[2px] uppercase">AVAILABLE</p>
-            <p class="font-body text-[15px] font-semibold text-primary">{{ roomAvailability(room) }}</p>
           </div>
         </div>
 

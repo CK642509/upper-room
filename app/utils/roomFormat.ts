@@ -1,16 +1,18 @@
-// Rooms store structured data in Sanity (district + city, numeric price, status
-// + optional availableFrom). The display strings the old hardcoded data carried
-// (location, locationShort, priceDisplay, availability) are derived here.
-const TIME_ZONE = 'Asia/Taipei'
+import type {LocationRef, BookedRange} from '~/types/room'
 
-/** 'Zhongzheng District, Taipei' — long form used on the detail page. */
-export function roomLocation(room: {district: string; city: string}): string {
-  return `${room.district} District, ${room.city}`
+// Rooms store structured data in Sanity (a referenced location + numeric price +
+// bookedRanges). The display strings the old hardcoded data carried (location,
+// priceDisplay) are derived here.
+
+/** 'Xinyi District' — the location name, used on the detail page. */
+export function roomLocation(room: {location: LocationRef}): string {
+  return room.location.name
 }
 
-/** 'Zhongzheng, Taipei' — short form used on cards and the meta row. */
-export function roomLocationShort(room: {district: string; city: string}): string {
-  return `${room.district}, ${room.city}`
+/** 'Xinyi District · Taipei 101 area' — name plus tagline when present. */
+export function roomLocationShort(room: {location: LocationRef}): string {
+  const {name, tagline} = room.location
+  return tagline ? `${name} · ${tagline}` : name
 }
 
 /** 'NT$22,000'. */
@@ -23,15 +25,20 @@ export function roomPriceDisplay(price: number): string {
   return `${roomPrice(price)} / mo`
 }
 
-/** 'Immediately' | 'Currently Rented' | 'From June 1, 2026'. */
-export function roomAvailability(room: {status: string; availableFrom?: string}): string {
-  if (room.status === 'rented') return 'Currently Rented'
-  if (!room.availableFrom) return 'Immediately'
-  const date = new Intl.DateTimeFormat('en-US', {
-    timeZone: TIME_ZONE,
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(room.availableFrom))
-  return `From ${date}`
+/**
+ * True when the room has no booked range overlapping the selected [from, to]
+ * range. When no range is selected (either bound missing), the room always
+ * passes. Dates are 'YYYY-MM-DD' strings, so lexical comparison is correct.
+ */
+export function isRoomFreeForRange(
+  room: {bookedRanges?: BookedRange[]},
+  from?: string,
+  to?: string,
+): boolean {
+  if (!from || !to) return true
+  // Normalize a reversed selection so order doesn't matter.
+  const lo = from <= to ? from : to
+  const hi = from <= to ? to : from
+  const ranges = room.bookedRanges ?? []
+  return !ranges.some((r) => r.start <= hi && r.end >= lo)
 }
