@@ -23,7 +23,7 @@ function go(page: number) {
 <template>
   <nav
     v-if="pageCount > 1"
-    class="flex items-center justify-center gap-2 pt-9"
+    class="flex items-center justify-center gap-2 pt-9 max-w-full overflow-x-auto px-2"
     aria-label="Pagination"
   >
     <button
