@@ -21,6 +21,7 @@ app/
   layouts/default.vue        # Wraps every page with <AppNavbar> + dark bg
   components/
     AppNavbar.vue            # Logo, nav links (Rooms/Events/Contact), CTA button
+    AppPagination.vue        # v-model numbered pager; self-hides when pageCount <= 1
   composables/
     useRooms.ts              # GROQ queries: useRoomsList / usePreviewRooms / useRoom(slug)
     useEvents.ts             # GROQ queries: useEventsIndex / useUpcomingEvents / useEvent(slug)
