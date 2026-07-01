@@ -33,11 +33,18 @@ export function useEventsIndex() {
   }`)
 }
 
-/** The next few upcoming events (homepage preview). */
+/**
+ * Homepage events preview: the next few upcoming events, plus the most recent
+ * past events as a fallback for when nothing is scheduled. The page shows
+ * `upcoming` when it has entries, otherwise `recentPast` (each card carries its
+ * own `upcoming` flag so past ones can be labelled). Both are sliced
+ * server-side to at most 3.
+ */
 export function useUpcomingEvents() {
-  return useSanityQuery<EventCard[]>(
-    `*[_type == "event" && startDateTime >= now()] | order(startDateTime asc)[0...3]{${CARD_FIELDS}}`,
-  )
+  return useSanityQuery<{upcoming: EventCard[]; recentPast: EventCard[]}>(`{
+    "upcoming": *[_type == "event" && startDateTime >= now()] | order(startDateTime asc)[0...3]{${CARD_FIELDS}},
+    "recentPast": *[_type == "event" && startDateTime < now()] | order(startDateTime desc)[0...3]{${CARD_FIELDS}}
+  }`)
 }
 
 /** A single event by its slug. */

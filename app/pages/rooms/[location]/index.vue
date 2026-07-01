@@ -23,6 +23,34 @@ const rooms = computed(() => roomsData.value ?? [])
 const visibleRooms = computed(() =>
   rooms.value.filter((room) => isRoomFreeForRange(room, from.value, to.value)),
 )
+
+// Client-side pagination over the (date-filtered) list, 10 rooms per page. The
+// pager component hides itself when there's only one page.
+const PAGE_SIZE = 10
+const page = ref(1)
+const pageCount = computed(() => Math.max(1, Math.ceil(visibleRooms.value.length / PAGE_SIZE)))
+const pagedRooms = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return visibleRooms.value.slice(start, start + PAGE_SIZE)
+})
+
+const roomsTop = ref<HTMLElement | null>(null)
+function goToPage(next: number) {
+  page.value = next
+  // Bring the top of the list into view when jumping pages.
+  const behavior =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+  roomsTop.value?.scrollIntoView({behavior, block: 'start'})
+}
+
+// Changing the date filter reshapes the list — go back to the first page.
+watch([from, to], () => {
+  page.value = 1
+})
+// Never leave the user stranded past the last page.
+watch(pageCount, (count) => {
+  if (page.value > count) page.value = count
+})
 </script>
 
 <template>
@@ -90,9 +118,9 @@ const visibleRooms = computed(() =>
     </section>
 
     <!-- Rooms List -->
-    <section class="w-full bg-base py-9 lg:py-12 px-5 lg:px-20 flex flex-col gap-5 lg:gap-0">
+    <section ref="roomsTop" class="w-full bg-base py-9 lg:py-12 px-5 lg:px-20 flex flex-col gap-5 lg:gap-0 scroll-mt-20">
       <div
-        v-for="room in visibleRooms"
+        v-for="room in pagedRooms"
         :key="room._id"
         class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-7 lg:py-7 lg:border-b lg:border-subtle"
       >
@@ -122,6 +150,9 @@ const visibleRooms = computed(() =>
         <template v-if="filtering">No rooms available for these dates. Try a different range.</template>
         <template v-else>No rooms in this area yet.</template>
       </p>
+
+      <!-- Pagination (hidden when there's a single page) -->
+      <AppPagination :model-value="page" :page-count="pageCount" @update:model-value="goToPage" />
     </section>
   </main>
 </template>

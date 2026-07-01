@@ -24,6 +24,18 @@ const urlFor = useSanityImageUrl()
         <p class="font-body text-xs font-bold text-coral tracking-[2px] uppercase">UPCOMING</p>
       </div>
 
+      <!-- Empty state: nothing scheduled right now -->
+      <div
+        v-if="!upcoming.length"
+        class="flex flex-col items-center text-center gap-2 py-12 mt-5 bg-card rounded-[10px] px-6"
+      >
+        <span class="text-[28px]" aria-hidden="true">📅</span>
+        <h3 class="font-heading text-[20px] font-bold text-primary">Nothing on the calendar yet</h3>
+        <p class="font-body text-[14px] font-normal text-secondary max-w-[420px] leading-[1.6]">
+          We're busy planning the next one — check back soon, or explore what we've done below.
+        </p>
+      </div>
+
       <!-- Event rows -->
       <div
         v-for="evt in upcoming"
@@ -60,19 +72,19 @@ const urlFor = useSanityImageUrl()
     </section>
 
     <!-- Past Events -->
-    <section class="w-full bg-base py-8 px-5 lg:px-20 pb-12 lg:pb-14 flex flex-col gap-0">
+    <section v-if="past.length" class="w-full bg-base py-8 px-5 lg:px-20 pb-12 lg:pb-14 flex flex-col gap-0">
       <!-- Section header -->
       <div class="flex items-center gap-3 pb-5 border-b border-subtle">
         <div class="w-1 h-5 bg-muted rounded-sm" />
         <p class="font-body text-xs font-bold text-muted tracking-[2px] uppercase">PAST EVENTS</p>
       </div>
 
-      <!-- Past cards grid -->
-      <div class="flex flex-col lg:flex-row gap-5 pt-5">
+      <!-- Past cards row: fixed-width cards that scroll horizontally when they overflow -->
+      <div class="flex flex-col lg:flex-row lg:overflow-x-auto gap-5 pt-5 lg:pb-2">
         <div
           v-for="evt in past"
           :key="evt._id"
-          class="flex-1 bg-card rounded-[10px] overflow-hidden flex flex-col"
+          class="lg:flex-1 lg:min-w-[280px] lg:shrink-0 bg-card rounded-[10px] overflow-hidden flex flex-col"
         >
           <img
             :src="urlFor(evt.mainImage).width(600).height(320).fit('crop').auto('format').url()"

@@ -2,7 +2,14 @@
 const {data: roomsData} = await usePreviewRooms()
 const previewRooms = computed(() => roomsData.value ?? [])
 const {data: previewEventsData} = await useUpcomingEvents()
-const previewEvents = computed(() => previewEventsData.value ?? [])
+// Prefer scheduled events; when none are upcoming, fall back to recent past
+// events so the section is never empty. Each card's own `upcoming` flag drives
+// the "Past" label.
+const previewEvents = computed(() => {
+  const d = previewEventsData.value
+  if (!d) return []
+  return d.upcoming.length ? d.upcoming : d.recentPast
+})
 const urlFor = useSanityImageUrl()
 </script>
 
@@ -162,7 +169,7 @@ const urlFor = useSanityImageUrl()
         </NuxtLink>
       </div>
 
-      <div class="flex flex-col lg:flex-row gap-5">
+      <div v-if="previewEvents.length" class="flex flex-col lg:flex-row gap-5">
         <NuxtLink
           v-for="evt in previewEvents"
           :key="evt._id"
@@ -181,12 +188,30 @@ const urlFor = useSanityImageUrl()
               <span class="font-heading text-[22px] font-bold text-on-amber leading-none">{{ eventDay(evt.startDateTime) }}</span>
               <span class="font-body text-[9px] font-bold text-on-amber">{{ eventMonth(evt.startDateTime) }}</span>
             </div>
+            <span
+              v-if="!evt.upcoming"
+              class="absolute top-4 right-4 font-body text-[10px] font-bold text-primary tracking-[1px] uppercase bg-base/85 rounded-full py-1 px-2.5"
+            >
+              Past
+            </span>
           </div>
           <div class="flex flex-col gap-2 p-5 pb-6">
             <h3 class="font-heading text-[20px] font-bold text-primary">{{ evt.title }}</h3>
             <p class="font-body text-[13px] font-normal text-secondary leading-[1.6]">{{ evt.description }}</p>
           </div>
         </NuxtLink>
+      </div>
+
+      <!-- Empty state: no events scheduled and none in the past yet -->
+      <div
+        v-else
+        class="bg-card rounded-[16px] flex flex-col items-center text-center gap-2 py-12 px-6"
+      >
+        <span class="text-[28px]" aria-hidden="true">🎉</span>
+        <h3 class="font-heading text-[20px] font-bold text-primary">No events just yet</h3>
+        <p class="font-body text-[14px] font-normal text-secondary max-w-[420px] leading-[1.6]">
+          We're planning something special — check back soon to join the community.
+        </p>
       </div>
     </section>
   </main>
