@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const mobileMenuOpen = ref(false)
 const roomsMenuOpen = ref(false)
+const roomsMenuRef = ref<HTMLElement | null>(null)
+const roomsMenuButtonRef = ref<HTMLButtonElement | null>(null)
 
 // Locations power the Rooms dropdown (desktop) and sub-links (mobile).
 const {data: locationsData} = await useLocationsList()
@@ -13,6 +15,30 @@ const navLinks = [
 
 function closeMenu() {
   mobileMenuOpen.value = false
+}
+
+function openRoomsMenu() {
+  roomsMenuOpen.value = true
+}
+
+function closeRoomsMenu(returnFocus = false) {
+  roomsMenuOpen.value = false
+
+  if (returnFocus) {
+    roomsMenuButtonRef.value?.focus()
+  }
+}
+
+function toggleRoomsMenu() {
+  roomsMenuOpen.value = !roomsMenuOpen.value
+}
+
+function onRoomsMenuFocusOut(event: FocusEvent) {
+  const nextTarget = event.relatedTarget
+
+  if (!(nextTarget instanceof Node) || !roomsMenuRef.value?.contains(nextTarget)) {
+    closeRoomsMenu()
+  }
 }
 </script>
 
@@ -31,17 +57,35 @@ function closeMenu() {
     <div class="hidden lg:flex items-center gap-8">
       <!-- Rooms with hover dropdown -->
       <div
-        class="relative"
-        @mouseenter="roomsMenuOpen = true"
-        @mouseleave="roomsMenuOpen = false"
+        ref="roomsMenuRef"
+        class="relative flex items-center gap-1"
+        @mouseenter="openRoomsMenu"
+        @mouseleave="closeRoomsMenu()"
+        @focusin="openRoomsMenu"
+        @focusout="onRoomsMenuFocusOut"
       >
         <NuxtLink
           to="/rooms"
-          class="font-body text-sm font-medium text-secondary hover:text-primary transition-colors flex items-center gap-1"
+          class="font-body text-sm font-medium text-secondary hover:text-primary transition-colors"
         >
           Rooms
-          <span class="text-[10px] transition-transform" :class="roomsMenuOpen ? 'rotate-180' : ''">▾</span>
         </NuxtLink>
+        <button
+          ref="roomsMenuButtonRef"
+          id="rooms-menu-button"
+          type="button"
+          class="font-body text-sm font-medium text-secondary hover:text-primary transition-colors flex items-center"
+          aria-label="Toggle room locations menu"
+          aria-haspopup="true"
+          :aria-expanded="roomsMenuOpen"
+          aria-controls="rooms-menu"
+          @click.stop="toggleRoomsMenu"
+          @keydown.enter.prevent="toggleRoomsMenu"
+          @keydown.space.prevent="toggleRoomsMenu"
+          @keydown.esc.prevent="closeRoomsMenu(true)"
+        >
+          <span class="text-[10px] transition-transform" :class="roomsMenuOpen ? 'rotate-180' : ''">▾</span>
+        </button>
 
         <Transition
           enter-active-class="transition duration-150 ease-out"
@@ -53,7 +97,11 @@ function closeMenu() {
         >
           <div
             v-show="roomsMenuOpen"
+            id="rooms-menu"
             class="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50"
+            aria-labelledby="rooms-menu-button"
+            :aria-hidden="!roomsMenuOpen"
+            @keydown.esc.prevent="closeRoomsMenu(true)"
           >
             <div class="w-[240px] bg-raised border border-subtle rounded-[12px] shadow-lg shadow-black/30 p-2 flex flex-col">
               <NuxtLink
