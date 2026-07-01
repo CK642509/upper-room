@@ -49,7 +49,7 @@ export interface LocationCard {
   slug: string
   tagline?: string
   image: RoomImage
-  roomCount?: number
+  roomCount: number
 }
 
 /** A location, used as the header of a location page. */
