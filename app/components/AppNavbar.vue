@@ -80,8 +80,8 @@ function onRoomsMenuFocusOut(event: FocusEvent) {
           :aria-expanded="roomsMenuOpen"
           aria-controls="rooms-menu"
           @click.stop="toggleRoomsMenu"
-          @keydown.enter.prevent="toggleRoomsMenu"
-          @keydown.space.prevent="toggleRoomsMenu"
+          @keydown.enter.prevent="openRoomsMenu"
+          @keydown.space.prevent="openRoomsMenu"
           @keydown.esc.prevent="closeRoomsMenu(true)"
         >
           <span class="text-[10px] transition-transform" :class="roomsMenuOpen ? 'rotate-180' : ''">▾</span>
@@ -100,7 +100,6 @@ function onRoomsMenuFocusOut(event: FocusEvent) {
             id="rooms-menu"
             class="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50"
             aria-labelledby="rooms-menu-button"
-            :aria-hidden="!roomsMenuOpen"
             @keydown.esc.prevent="closeRoomsMenu(true)"
           >
             <div class="w-[240px] bg-raised border border-subtle rounded-[12px] shadow-lg shadow-black/30 p-2 flex flex-col">
