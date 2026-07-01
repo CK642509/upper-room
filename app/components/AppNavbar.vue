@@ -84,7 +84,19 @@ function onRoomsMenuFocusOut(event: FocusEvent) {
           @keydown.space.prevent="openRoomsMenu"
           @keydown.esc.prevent="closeRoomsMenu(true)"
         >
-          <span class="text-[10px] transition-transform" :class="roomsMenuOpen ? 'rotate-180' : ''">▾</span>
+          <svg
+            class="w-4 h-4 transition-transform"
+            :class="roomsMenuOpen ? 'rotate-180' : ''"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
         </button>
 
         <Transition
