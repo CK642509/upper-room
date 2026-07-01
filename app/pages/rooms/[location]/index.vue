@@ -38,7 +38,9 @@ const roomsTop = ref<HTMLElement | null>(null)
 function goToPage(next: number) {
   page.value = next
   // Bring the top of the list into view when jumping pages.
-  roomsTop.value?.scrollIntoView({behavior: 'smooth', block: 'start'})
+  const behavior =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+  roomsTop.value?.scrollIntoView({behavior, block: 'start'})
 }
 
 // Changing the date filter reshapes the list — go back to the first page.
