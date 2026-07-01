@@ -207,7 +207,7 @@ const urlFor = useSanityImageUrl()
         v-else
         class="bg-card rounded-[16px] flex flex-col items-center text-center gap-2 py-12 px-6"
       >
-        <span class="text-[28px]">🎉</span>
+        <span class="text-[28px]" aria-hidden="true">🎉</span>
         <h3 class="font-heading text-[20px] font-bold text-primary">No events just yet</h3>
         <p class="font-body text-[14px] font-normal text-secondary max-w-[420px] leading-[1.6]">
           We're planning something special — check back soon to join the community.
