@@ -44,6 +44,8 @@ export default defineNuxtConfig({
       include: [
         '@sanity/client',
         '@sanity/image-url',
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
       ],
     },
   },

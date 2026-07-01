@@ -1,4 +1,4 @@
-import type {RoomCard, RoomDetail} from '~/types/room'
+import type {RoomCard, RoomDetail, LocationCard, LocationDetail} from '~/types/room'
 
 // Fields needed to render a room card/list row.
 const CARD_FIELDS = `
@@ -6,29 +6,50 @@ const CARD_FIELDS = `
   title,
   "slug": slug.current,
   roomType,
-  district,
-  city,
+  "location": location->{name, "slug": slug.current, tagline},
   price,
-  status,
   description,
-  mainImage
+  mainImage,
+  bookedRanges[]{start, end}
 `
 
 // Everything the detail page needs.
 const DETAIL_FIELDS = `
   ${CARD_FIELDS},
-  availableFrom,
   body,
   heroImage,
   gallery[]{..., _key}
 `
 
-/** All rooms, ordered by rent (high to low). */
-export function useRoomsList() {
-  return useSanityQuery<RoomCard[]>(`*[_type == "room"] | order(price desc){${CARD_FIELDS}}`)
+/** All locations, in display order, each with how many rooms it has. */
+export function useLocationsList() {
+  return useSanityQuery<LocationCard[]>(`*[_type == "location"] | order(order asc){
+    _id,
+    name,
+    "slug": slug.current,
+    tagline,
+    image,
+    "roomCount": count(*[_type == "room" && references(^._id)])
+  }`)
 }
 
-/** The first few rooms (homepage preview). */
+/** A single location by its slug (location page header). */
+export function useLocation(slug: string) {
+  return useSanityQuery<LocationDetail>(
+    `*[_type == "location" && slug.current == $slug][0]{_id, name, "slug": slug.current, tagline, image}`,
+    {slug},
+  )
+}
+
+/** All rooms in one location, ordered by rent (high to low). */
+export function useRoomsByLocation(slug: string) {
+  return useSanityQuery<RoomCard[]>(
+    `*[_type == "room" && location->slug.current == $slug] | order(price desc){${CARD_FIELDS}}`,
+    {slug},
+  )
+}
+
+/** The most expensive few rooms (homepage preview). */
 export function usePreviewRooms() {
   return useSanityQuery<RoomCard[]>(
     `*[_type == "room"] | order(price desc)[0...3]{${CARD_FIELDS}}`,
