@@ -74,7 +74,7 @@ function onRoomsMenuFocusOut(event: FocusEvent) {
           ref="roomsMenuButtonRef"
           id="rooms-menu-button"
           type="button"
-          class="font-body text-sm font-medium text-secondary hover:text-primary transition-colors flex items-center"
+          class="font-body text-sm font-medium text-secondary hover:text-primary transition-colors flex items-center focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-primary rounded-sm"
           aria-label="Toggle room locations menu"
           aria-haspopup="true"
           :aria-expanded="roomsMenuOpen"
@@ -108,7 +108,7 @@ function onRoomsMenuFocusOut(event: FocusEvent) {
                 v-for="location in locations"
                 :key="location._id"
                 :to="`/rooms/${location.slug}`"
-                class="flex flex-col gap-0.5 rounded-[8px] px-3 py-2.5 hover:bg-card transition-colors"
+                class="flex flex-col gap-0.5 rounded-[8px] px-3 py-2.5 hover:bg-card transition-colors focus:outline focus:outline-2 focus:outline-primary focus:outline-offset-2"
               >
                 <span class="font-body text-sm font-semibold text-primary">{{ location.name }}</span>
                 <span v-if="location.tagline" class="font-body text-[12px] text-muted">{{ location.tagline }}</span>
