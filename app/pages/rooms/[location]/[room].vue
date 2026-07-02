@@ -10,7 +10,15 @@ if (!room.value) {
   throw createError({ statusCode: 404, message: 'Room not found' })
 }
 
+// A room's canonical URL nests it under its own location. If the URL carries
+// any other location slug (typo, stale link, or the room moved districts),
+// permanently redirect to the canonical address instead of serving the same
+// page under multiple URLs (duplicate content for search engines).
 const locationSlug = route.params.location as string
+if (room.value.location.slug !== locationSlug) {
+  await navigateTo(`/rooms/${room.value.location.slug}/${room.value.slug}`, {redirectCode: 301, replace: true})
+}
+
 const urlFor = useSanityImageUrl()
 
 useSeoMeta({
