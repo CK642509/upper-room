@@ -12,6 +12,14 @@ if (!event.value) {
 
 const urlFor = useSanityImageUrl()
 
+useSeoMeta({
+  title: event.value.title,
+  description: event.value.tagline || event.value.description,
+  ogTitle: `${event.value.title} · Upper Room`,
+  ogDescription: event.value.tagline || event.value.description,
+  ogImage: urlFor(event.value.mainImage).width(1200).height(630).fit('crop').auto('format').url(),
+})
+
 const details = computed(() => {
   const e = event.value
   if (!e) return []

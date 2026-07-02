@@ -10,6 +10,14 @@ if (!location.value) {
 const {data: roomsData} = await useRoomsByLocation(locationSlug)
 const urlFor = useSanityImageUrl()
 
+useSeoMeta({
+  title: `Rooms in ${location.value.name}`,
+  description: `Browse furnished co-living rooms in ${location.value.name}, Taipei${location.value.tagline ? ` (${location.value.tagline})` : ''}. Check availability for your dates and book a viewing.`,
+  ogTitle: `Rooms in ${location.value.name} · Upper Room`,
+  ogDescription: `Browse furnished co-living rooms in ${location.value.name}, Taipei. Check availability for your dates and book a viewing.`,
+  ogImage: urlFor(location.value.image).width(1200).height(630).fit('crop').auto('format').url(),
+})
+
 // Date range filter (YYYY-MM-DD strings from native date inputs).
 const from = ref('')
 const to = ref('')

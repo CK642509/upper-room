@@ -12,6 +12,14 @@ if (!room.value) {
 
 const locationSlug = route.params.location as string
 const urlFor = useSanityImageUrl()
+
+useSeoMeta({
+  title: room.value.title,
+  description: room.value.description,
+  ogTitle: `${room.value.title} · Upper Room`,
+  ogDescription: room.value.description,
+  ogImage: urlFor(room.value.mainImage).width(1200).height(630).fit('crop').auto('format').url(),
+})
 </script>
 
 <template>

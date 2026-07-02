@@ -3,7 +3,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: 'Upper Room',
+      // Page titles come from each page's useSeoMeta + the titleTemplate in
+      // app.vue — don't set a static `title` here or it feeds the template
+      // and doubles up ("Upper Room · Upper Room").
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/logo.ico' },
       ],
@@ -13,7 +15,26 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/sanity',
     '@nuxt/scripts',
+    '@nuxtjs/sitemap',
   ],
+  // Canonical site identity, used by the sitemap module (absolute URLs) and
+  // overridable per-environment via NUXT_PUBLIC_SITE_URL (e.g. previews).
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.upperroom.tw',
+    name: 'Upper Room Taipei Housing',
+  },
+  runtimeConfig: {
+    public: {
+      // Mirrors site.url for app code (canonical/og:url in app.vue); the
+      // NUXT_PUBLIC_SITE_URL env var overrides it at runtime by convention.
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.upperroom.tw',
+    },
+  },
+  // Static routes (/, /rooms, /events) are picked up automatically from
+  // `pages/`; the dynamic Sanity-backed routes come from this endpoint.
+  sitemap: {
+    sources: ['/api/__sitemap__/urls'],
+  },
   css: ['~/assets/css/main.css'],
   tailwindcss: {
     configPath: 'tailwind.config.ts',

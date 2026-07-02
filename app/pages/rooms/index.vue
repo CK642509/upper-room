@@ -2,6 +2,14 @@
 const {data} = await useLocationsList()
 const locations = computed(() => data.value ?? [])
 const urlFor = useSanityImageUrl()
+
+useSeoMeta({
+  title: 'Rooms',
+  description: 'Explore our fully furnished co-living rooms across Taipei — pick a neighbourhood to start.',
+  ogTitle: 'Rooms · Upper Room',
+  ogDescription: 'Explore our fully furnished co-living rooms across Taipei — pick a neighbourhood to start.',
+  ogImage: 'https://images.unsplash.com/photo-1595139367629-c4601c4ffe06?w=1200&h=630&fit=crop&q=80',
+})
 </script>
 
 <template>

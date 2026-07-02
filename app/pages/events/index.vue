@@ -3,6 +3,17 @@ const {data} = await useEventsIndex()
 const upcoming = computed(() => data.value?.upcoming ?? [])
 const past = computed(() => data.value?.past ?? [])
 const urlFor = useSanityImageUrl()
+
+// Share preview: use the nearest upcoming event's photo (or the latest past
+// one) since the page has no hero image of its own.
+const shareEvent = upcoming.value[0] ?? past.value[0]
+useSeoMeta({
+  title: 'Events',
+  description: "Community and culture events in Taipei — every week there's something happening. Come for the event, stay for the friends.",
+  ogTitle: 'Events · Upper Room',
+  ogDescription: "Community and culture events in Taipei — every week there's something happening. Come for the event, stay for the friends.",
+  ogImage: shareEvent ? urlFor(shareEvent.mainImage).width(1200).height(630).fit('crop').auto('format').url() : undefined,
+})
 </script>
 
 <template>

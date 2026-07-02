@@ -11,6 +11,17 @@ const previewEvents = computed(() => {
   return d.upcoming.length ? d.upcoming : d.recentPast
 })
 const urlFor = useSanityImageUrl()
+
+// Homepage carries the full brand title itself, so skip the template suffix.
+useHead({titleTemplate: null})
+useSeoMeta({
+  title: 'Upper Room — Co-living Rooms & Community Events in Taipei',
+  description:
+    'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+  ogTitle: 'Upper Room — Co-living in Taipei',
+  ogDescription: 'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+  ogImage: 'https://images.unsplash.com/photo-1664947938370-f0c040bf9ced?w=1200&h=630&fit=crop&q=80',
+})
 </script>
 
 <template>
