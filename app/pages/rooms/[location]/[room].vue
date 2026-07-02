@@ -20,6 +20,7 @@ if (room.value.location.slug !== locationSlug) {
 }
 
 const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
 
 useSeoMeta({
   title: room.value.title,
@@ -35,8 +36,9 @@ useSeoMeta({
     <!-- Photo Hero -->
     <section class="relative overflow-hidden h-[340px] lg:h-[480px]">
       <img
-        :src="urlFor(room.heroImage || room.mainImage).width(1600).height(960).fit('crop').auto('format').url()"
+        v-bind="imgAttrs(room.heroImage || room.mainImage, {width: 1600, height: 960, widths: [800, 1600], sizes: '100vw'})"
         :alt="(room.heroImage || room.mainImage).alt || room.title"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div

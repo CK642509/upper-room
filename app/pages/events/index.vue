@@ -3,6 +3,7 @@ const {data} = await useEventsIndex()
 const upcoming = computed(() => data.value?.upcoming ?? [])
 const past = computed(() => data.value?.past ?? [])
 const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
 
 // Share preview: use the nearest upcoming event's photo (or the latest past
 // one) since the page has no hero image of its own.
@@ -98,8 +99,10 @@ useSeoMeta({
           class="lg:flex-1 lg:min-w-[280px] lg:shrink-0 bg-card rounded-[10px] overflow-hidden flex flex-col"
         >
           <img
-            :src="urlFor(evt.mainImage).width(600).height(320).fit('crop').auto('format').url()"
+            v-bind="imgAttrs(evt.mainImage, {width: 600, height: 320, sizes: '(min-width: 1024px) 320px, 100vw'})"
             :alt="evt.mainImage.alt || evt.title"
+            loading="lazy"
+            decoding="async"
             class="w-full h-[180px] lg:h-[160px] object-cover"
           />
           <div class="flex flex-col gap-1.5 p-4 pb-5">

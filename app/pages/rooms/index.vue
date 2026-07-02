@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const {data} = await useLocationsList()
 const locations = computed(() => data.value ?? [])
-const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
 
 useSeoMeta({
   title: 'Rooms',
@@ -19,6 +19,7 @@ useSeoMeta({
       <img
         src="https://images.unsplash.com/photo-1595139367629-c4601c4ffe06?w=1440&q=80"
         alt="Rooms"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -44,8 +45,10 @@ useSeoMeta({
           class="group relative overflow-hidden rounded-[16px] h-[220px] lg:h-[260px] flex items-end"
         >
           <img
-            :src="urlFor(location.image).width(560).height(520).fit('crop').auto('format').url()"
+            v-bind="imgAttrs(location.image, {width: 560, height: 520, sizes: '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'})"
             :alt="location.image.alt || location.name"
+            loading="lazy"
+            decoding="async"
             class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div

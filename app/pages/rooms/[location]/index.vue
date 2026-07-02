@@ -9,6 +9,7 @@ if (!location.value) {
 
 const {data: roomsData} = await useRoomsByLocation(locationSlug)
 const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
 
 useSeoMeta({
   title: `Rooms in ${location.value.name}`,
@@ -66,8 +67,9 @@ watch(pageCount, (count) => {
     <!-- Location Header -->
     <section class="relative overflow-hidden h-[260px] lg:h-[340px]">
       <img
-        :src="urlFor(location.image).width(1600).height(680).fit('crop').auto('format').url()"
+        v-bind="imgAttrs(location.image, {width: 1600, height: 680, widths: [800, 1600], sizes: '100vw'})"
         :alt="location.image.alt || location.name"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -133,8 +135,10 @@ watch(pageCount, (count) => {
         class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-7 lg:py-7 lg:border-b lg:border-subtle"
       >
         <img
-          :src="urlFor(room.mainImage).width(480).height(312).fit('crop').auto('format').url()"
+          v-bind="imgAttrs(room.mainImage, {width: 480, height: 312, sizes: '(min-width: 1024px) 240px, 100vw'})"
           :alt="room.mainImage.alt || room.title"
+          loading="lazy"
+          decoding="async"
           class="w-full lg:w-[240px] h-[200px] lg:h-[156px] object-cover rounded-[10px] shrink-0"
         />
         <div class="flex-1 flex flex-col gap-2">
