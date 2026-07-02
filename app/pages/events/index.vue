@@ -5,6 +5,27 @@ const past = computed(() => data.value?.past ?? [])
 const urlFor = useSanityImageUrl()
 const imgAttrs = useSanityImageAttrs()
 
+// Client-side pagination over past events (same pattern as the rooms list),
+// 9 cards per page = 3 rows of the lg 3-column grid. The pager component
+// hides itself when there's only one page. No clamp/reset watches needed —
+// unlike the rooms list there's no filter, so the list never reshapes.
+const PAGE_SIZE = 9
+const page = ref(1)
+const pageCount = computed(() => Math.max(1, Math.ceil(past.value.length / PAGE_SIZE)))
+const pagedPast = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return past.value.slice(start, start + PAGE_SIZE)
+})
+
+const pastTop = ref<HTMLElement | null>(null)
+function goToPage(next: number) {
+  page.value = next
+  // Bring the top of the section into view when jumping pages.
+  const behavior =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+  pastTop.value?.scrollIntoView({behavior, block: 'start'})
+}
+
 // Share preview: use the nearest upcoming event's photo (or the latest past
 // one) since the page has no hero image of its own.
 const shareEvent = upcoming.value[0] ?? past.value[0]
@@ -84,22 +105,22 @@ useSeoMeta({
     </section>
 
     <!-- Past Events -->
-    <section v-if="past.length" class="w-full bg-base py-8 px-5 lg:px-20 pb-12 lg:pb-14 flex flex-col gap-0">
+    <section v-if="past.length" ref="pastTop" class="w-full bg-base py-8 px-5 lg:px-20 pb-12 lg:pb-14 flex flex-col gap-0 scroll-mt-20">
       <!-- Section header -->
       <div class="flex items-center gap-3 pb-5 border-b border-subtle">
         <div class="w-1 h-5 bg-muted rounded-sm" />
         <p class="font-body text-xs font-bold text-muted tracking-[2px] uppercase">PAST EVENTS</p>
       </div>
 
-      <!-- Past cards row: fixed-width cards that scroll horizontally when they overflow -->
-      <div class="flex flex-col lg:flex-row lg:overflow-x-auto gap-5 pt-5 lg:pb-2">
+      <!-- Past cards: single column on mobile, 3-column grid on desktop -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-5">
         <div
-          v-for="evt in past"
+          v-for="evt in pagedPast"
           :key="evt._id"
-          class="lg:flex-1 lg:min-w-[280px] lg:shrink-0 bg-card rounded-[10px] overflow-hidden flex flex-col"
+          class="bg-card rounded-[10px] overflow-hidden flex flex-col"
         >
           <img
-            v-bind="imgAttrs(evt.mainImage, {width: 600, height: 320, sizes: '(min-width: 1024px) 320px, 100vw'})"
+            v-bind="imgAttrs(evt.mainImage, {width: 600, height: 320, sizes: '(min-width: 1024px) 33vw, 100vw'})"
             :alt="evt.mainImage.alt || evt.title"
             loading="lazy"
             decoding="async"
@@ -117,6 +138,9 @@ useSeoMeta({
           </div>
         </div>
       </div>
+
+      <!-- Pagination (hidden when there's a single page) -->
+      <AppPagination :model-value="page" :page-count="pageCount" @update:model-value="goToPage" />
     </section>
   </main>
 </template>
