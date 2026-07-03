@@ -28,11 +28,13 @@ export function useSanityImageAttrs() {
     source: SanityImageSource,
     {width, height, sizes, widths = [width, width * 2]}: {width: number; height: number; sizes: string; widths?: number[]},
   ) => {
-    const at = (w: number) =>
-      urlFor(source).width(w).height(Math.round((height / width) * w)).fit('crop').auto('format').url()
+    const at = (w: number) => {
+      const wInt = Math.round(w)
+      return urlFor(source).width(wInt).height(Math.round((height / width) * wInt)).fit('crop').auto('format').url()
+    }
     return {
       src: at(width),
-      srcset: widths.map((w) => `${at(w)} ${w}w`).join(', '),
+      srcset: widths.map((w) => `${at(w)} ${Math.round(w)}w`).join(', '),
       sizes,
     }
   }
