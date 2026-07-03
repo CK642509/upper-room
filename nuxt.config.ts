@@ -16,6 +16,11 @@ export default defineNuxtConfig({
     '@nuxtjs/sanity',
     '@nuxt/scripts',
     '@nuxtjs/sitemap',
+    // Auto-generates robots.txt from site config: the Sitemap line is derived
+    // from `site.url` (so it follows NUXT_PUBLIC_SITE_URL per environment), and
+    // non-production deploys are set noindex automatically. Replaces the old
+    // static public/robots.txt which hard-coded the production host.
+    '@nuxtjs/robots',
   ],
   // Canonical site identity, used by the sitemap module (absolute URLs) and
   // overridable per-environment via NUXT_PUBLIC_SITE_URL (e.g. previews).
