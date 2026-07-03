@@ -1,14 +1,15 @@
 # Upper Room
 
-**Upper Room** 是一個位於台北的共居空間預訂平台，為尋找高品質住宿的外籍人士和本地居民提供服務。本專案採用現代化的 Nuxt 4 框架建構，提供房間瀏覽、活動資訊等功能。
+**Upper Room** 是一個位於台北的共居空間預訂平台，為尋找高品質住宿的外籍人士和本地居民提供服務。本專案採用現代化的 Nuxt 4 框架建構，內容由 Sanity CMS 管理，提供房間瀏覽、活動資訊等功能。
 
 ## ✨ 專案特色
 
-- 🏠 **房間展示** - 完整的房間列表與詳細資訊
+- 🏠 **房間展示** - 依台北行政區分組的房間列表，支援入住／退租日期篩選與分頁
 - 📅 **社群活動** - 即將舉辦與過往活動的展示
+- 📝 **Sanity CMS** - 房間、地區、活動內容皆由 Sanity 管理，透過 GROQ 查詢
+- 🔍 **SEO 友善** - 每頁動態 meta 標籤（Open Graph）、canonical 網址、自動產生 sitemap
 - 🎨 **現代化 UI** - 使用 Tailwind CSS 與自訂設計系統
-- ⚡ **高效能** - 基於 Nuxt 4 與 Vue 3
-- 📱 **響應式設計** - 完美適配各種裝置
+- 📱 **響應式設計** - Mobile-first，完美適配各種裝置
 
 ## 🚀 快速開始
 
@@ -32,7 +33,15 @@ cd upper-room
 npm install
 ```
 
-3. **啟動開發伺服器**
+3. **設定環境變數**
+
+```bash
+cp .env.example .env
+```
+
+`SANITY_DATASET` 控制網站讀取的資料集（`development` = 測試資料、`production` = 正式資料），其餘設定請參考 `.env.example` 內的說明。
+
+4. **啟動開發伺服器**
 
 ```bash
 npm run dev
@@ -53,28 +62,38 @@ npm run preview    # 預覽正式版本
 
 ```
 upper-room/
-├── app/                          # 應用程式原始碼（Nuxt 4 預設 srcDir）
-│   ├── app.vue                   # 根元件：<NuxtLayout> + <NuxtPage>
+├── app/                              # 應用程式原始碼（Nuxt 4 預設 srcDir）
+│   ├── app.vue                       # 根元件：<NuxtLayout> + <NuxtPage>、全站 SEO 預設值
 │   ├── layouts/
-│   │   └── default.vue           # 預設版面配置（導覽列 + 深色背景）
+│   │   └── default.vue               # 預設版面配置（導覽列 + 頁面 + 共用 footer）
 │   ├── pages/
-│   │   ├── index.vue             # 首頁（Hero、統計、關於、房間預覽、活動預覽、聯絡）
+│   │   ├── index.vue                 # 首頁（Hero、統計、關於、房間預覽、活動預覽）
 │   │   ├── rooms/
-│   │   │   ├── index.vue         # 房間列表頁
-│   │   │   └── [id].vue          # 房間詳細頁
+│   │   │   ├── index.vue             # 地區列表頁（選擇行政區）
+│   │   │   └── [location]/
+│   │   │       ├── index.vue         # 單一地區的房間列表（日期篩選 + 分頁）
+│   │   │       └── [room].vue        # 房間詳細頁
 │   │   └── events/
-│   │       ├── index.vue         # 活動列表頁（即將舉辦 + 過往活動）
-│   │       └── [id].vue          # 活動詳細頁
+│   │       ├── index.vue             # 活動列表頁（即將舉辦 + 過往活動）
+│   │       └── [id].vue              # 活動詳細頁
 │   ├── components/
-│   │   └── AppNavbar.vue         # 導覽列元件（Logo、導覽連結、CTA 按鈕）
+│   │   ├── AppNavbar.vue             # 導覽列（Logo、Rooms 下拉選單、導覽連結、CTA）
+│   │   ├── AppFooter.vue             # 共用聯絡區塊 footer（WhatsApp / Line / Email）
+│   │   └── AppPagination.vue         # 數字分頁元件（單頁時自動隱藏）
 │   ├── composables/
-│   │   └── useData.ts            # 靜態資料層（Room[] 與 Event[] 陣列 + 輔助函式）
+│   │   ├── useRooms.ts               # 房間與地區的 GROQ 查詢
+│   │   ├── useEvents.ts              # 活動的 GROQ 查詢
+│   │   └── useSanityImageUrl.ts      # Sanity 圖片網址產生器
+│   ├── types/                        # RoomCard / EventCard 等 TypeScript 型別
+│   ├── utils/                        # 日期、價格等格式化輔助函式（自動匯入）
 │   └── assets/css/
-│       └── main.css              # Google Fonts 引入 + 基礎樣式
-├── public/                       # 靜態檔案
-├── tailwind.config.ts            # Tailwind 設計 token 定義
-├── nuxt.config.ts                # Nuxt 設定檔
-└── package.json                  # 專案相依套件
+│       └── main.css                  # Google Fonts 引入 + 基礎樣式
+├── server/
+│   └── api/__sitemap__/urls.ts       # Sitemap 動態網址來源（從 Sanity 取得所有 slug）
+├── public/                           # 靜態檔案（logo、robots.txt）
+├── tailwind.config.ts                # Tailwind 設計 token 定義
+├── nuxt.config.ts                    # Nuxt 設定檔（Sanity 連線、sitemap、站台網址）
+└── package.json                      # 專案相依套件
 ```
 
 ## 🎨 技術架構
@@ -93,12 +112,19 @@ upper-room/
   - 圓角：`rounded-md` (10px)、`rounded-lg` (16px)
 
 ### 資料管理
-- **靜態資料** - 所有房間與活動資料硬編碼於 `app/composables/useData.ts`
-- **無 API** - 頁面直接匯入 composables，無後端 API 或狀態管理
+- **Sanity CMS** - 房間、地區、活動內容集中在 Sanity，透過 `@nuxtjs/sanity` 以 GROQ 查詢
+- **Composables 資料層** - 所有查詢集中於 `useRooms.ts` / `useEvents.ts`，頁面不直接寫 GROQ
+- **富文本** - 詳細頁內文使用 Portable Text，以 `@portabletext/vue` 渲染
 
 ### 路由設計
-- 房間 ID：kebab-case 格式（如 `studio-a`、`double-room-b`、`single-room-c`）
-- 活動 ID：kebab-case 格式（如 `night-market-tour`、`tea-ceremony`）
+- 路由參數使用 Sanity 的 **slug**（kebab-case），而非文件 `_id`
+- 房間網址依地區巢狀：`/rooms/xinyi/studio-a`；地區不符時會 301 轉址到正確網址
+- 活動網址：`/events/night-market-tour`
+
+### SEO
+- 每頁以 `useSeoMeta` 設定標題、描述與 Open Graph 標籤（詳細頁由 Sanity 資料動態產生）
+- 全站 canonical 網址與 `og:url` 指向正式網域（`NUXT_PUBLIC_SITE_URL` 可覆寫）
+- `@nuxtjs/sitemap` 自動產生 `/sitemap.xml`，動態路由由 `server/api/__sitemap__/urls.ts` 提供
 
 ## ⚠️ 重要注意事項
 

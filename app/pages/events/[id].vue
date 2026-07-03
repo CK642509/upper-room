@@ -11,6 +11,15 @@ if (!event.value) {
 }
 
 const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
+
+useSeoMeta({
+  title: event.value.title,
+  description: event.value.tagline || event.value.description,
+  ogTitle: `${event.value.title} · Upper Room`,
+  ogDescription: event.value.tagline || event.value.description,
+  ogImage: urlFor(event.value.mainImage).width(1200).height(630).fit('crop').auto('format').url(),
+})
 
 const details = computed(() => {
   const e = event.value
@@ -30,8 +39,9 @@ const details = computed(() => {
     <!-- Hero -->
     <section class="relative overflow-hidden h-[420px] lg:h-[400px]">
       <img
-        :src="urlFor(event.heroImage || event.mainImage).width(1600).height(800).fit('crop').auto('format').url()"
+        v-bind="imgAttrs(event.heroImage || event.mainImage, {width: 1600, height: 800, widths: [800, 1600], sizes: '100vw'})"
         :alt="(event.heroImage || event.mainImage).alt || event.title"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -98,8 +108,10 @@ const details = computed(() => {
             <img
               v-for="(img, i) in event.gallery.slice(0, 3)"
               :key="img._key ?? i"
-              :src="urlFor(img).width(440).height(320).fit('crop').auto('format').url()"
+              v-bind="imgAttrs(img, {width: 440, height: 320, sizes: '(min-width: 1024px) 220px, 100vw'})"
               :alt="img.alt || `Event photo ${i + 1}`"
+              loading="lazy"
+              decoding="async"
               class="w-full lg:w-[220px] h-[200px] lg:h-[160px] object-cover rounded-[10px]"
             />
           </div>
@@ -108,8 +120,10 @@ const details = computed(() => {
             <img
               v-for="(img, i) in event.gallery.slice(3)"
               :key="img._key ?? i"
-              :src="urlFor(img).width(680).height(280).fit('crop').auto('format').url()"
+              v-bind="imgAttrs(img, {width: 680, height: 280, sizes: '(min-width: 1024px) 336px, 100vw'})"
               :alt="img.alt || `Event photo ${i + 4}`"
+              loading="lazy"
+              decoding="async"
               class="w-full h-[200px] lg:h-[140px] object-cover rounded-[10px]"
               :class="event.gallery.length - 3 === 1 ? 'lg:w-full' : 'lg:w-[336px]'"
             />

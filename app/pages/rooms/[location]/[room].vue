@@ -10,8 +10,34 @@ if (!room.value) {
   throw createError({ statusCode: 404, message: 'Room not found' })
 }
 
+// A room's canonical URL nests it under its own location. If the URL carries
+// any other location slug (typo, stale link, or the room moved districts),
+// permanently redirect to the canonical address instead of serving the same
+// page under multiple URLs (duplicate content for search engines).
 const locationSlug = route.params.location as string
+if (room.value.location.slug !== locationSlug) {
+  await navigateTo(`/rooms/${room.value.location.slug}/${room.value.slug}`, {redirectCode: 301, replace: true})
+}
+
 const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
+
+// Photos shown in the hero slot: the dedicated hero shot (or main image)
+// first, then the gallery. Clicking a thumbnail swaps it into the hero.
+const photos = computed(() => {
+  const r = room.value
+  return r ? [r.heroImage || r.mainImage, ...(r.gallery ?? [])] : []
+})
+const selectedPhoto = ref(0)
+const heroPhoto = computed(() => photos.value[selectedPhoto.value] ?? photos.value[0]!)
+
+useSeoMeta({
+  title: room.value.title,
+  description: room.value.description,
+  ogTitle: `${room.value.title} · Upper Room`,
+  ogDescription: room.value.description,
+  ogImage: urlFor(room.value.mainImage).width(1200).height(630).fit('crop').auto('format').url(),
+})
 </script>
 
 <template>
@@ -19,8 +45,9 @@ const urlFor = useSanityImageUrl()
     <!-- Photo Hero -->
     <section class="relative overflow-hidden h-[340px] lg:h-[480px]">
       <img
-        :src="urlFor(room.heroImage || room.mainImage).width(1600).height(960).fit('crop').auto('format').url()"
-        :alt="(room.heroImage || room.mainImage).alt || room.title"
+        v-bind="imgAttrs(heroPhoto, {width: 1600, height: 960, widths: [800, 1600], sizes: '100vw'})"
+        :alt="heroPhoto.alt || room.title"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -36,15 +63,28 @@ const urlFor = useSanityImageUrl()
         ← {{ room.location.name }}
       </NuxtLink>
 
-      <!-- Thumbnails -->
-      <div v-if="room.gallery?.length" class="absolute bottom-6 left-5 lg:bottom-[100px] lg:left-20 z-10 flex gap-2">
-        <img
-          v-for="(thumb, i) in room.gallery"
+      <!-- Thumbnails: click to swap the photo into the hero above. Scrolls
+           horizontally when there are more thumbs than the row fits. -->
+      <div
+        v-if="photos.length > 1"
+        class="absolute bottom-6 left-5 right-5 lg:bottom-[100px] lg:left-20 lg:right-20 z-10 flex gap-2 overflow-x-auto"
+      >
+        <button
+          v-for="(thumb, i) in photos"
           :key="thumb._key ?? i"
-          :src="urlFor(thumb).width(200).height(140).fit('crop').auto('format').url()"
-          :alt="thumb.alt || `${room.title} photo ${i + 1}`"
-          class="w-[100px] h-[64px] lg:h-[70px] object-cover rounded-sm cursor-pointer hover:opacity-80 transition-opacity"
-        />
+          type="button"
+          class="shrink-0 rounded-sm overflow-hidden transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+          :class="i === selectedPhoto ? 'ring-2 ring-amber' : 'hover:opacity-80'"
+          :aria-label="`Show photo ${i + 1} of ${photos.length}`"
+          :aria-pressed="i === selectedPhoto"
+          @click="selectedPhoto = i"
+        >
+          <img
+            :src="urlFor(thumb).width(200).height(140).fit('crop').auto('format').url()"
+            :alt="thumb.alt || `${room.title} photo ${i + 1}`"
+            class="block w-[100px] h-[64px] lg:h-[70px] object-cover"
+          />
+        </button>
       </div>
     </section>
 
