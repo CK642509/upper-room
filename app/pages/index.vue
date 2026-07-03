@@ -10,7 +10,18 @@ const previewEvents = computed(() => {
   if (!d) return []
   return d.upcoming.length ? d.upcoming : d.recentPast
 })
-const urlFor = useSanityImageUrl()
+const imgAttrs = useSanityImageAttrs()
+
+// Homepage carries the full brand title itself, so skip the template suffix.
+useHead({titleTemplate: null})
+useSeoMeta({
+  title: 'Upper Room — Co-living Rooms & Community Events in Taipei',
+  description:
+    'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+  ogTitle: 'Upper Room — Co-living in Taipei',
+  ogDescription: 'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+  ogImage: 'https://images.unsplash.com/photo-1664947938370-f0c040bf9ced?w=1200&h=630&fit=crop&q=80',
+})
 </script>
 
 <template>
@@ -20,6 +31,7 @@ const urlFor = useSanityImageUrl()
       <img
         src="https://images.unsplash.com/photo-1664947938370-f0c040bf9ced?w=1440&q=80"
         alt="Co-living in Taiwan"
+        fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
@@ -99,6 +111,8 @@ const urlFor = useSanityImageUrl()
         <img
           src="https://images.unsplash.com/photo-1714978444624-1fcb0c550a72?w=900&q=80"
           alt="Community"
+          loading="lazy"
+          decoding="async"
           class="absolute inset-0 w-full h-full object-cover"
         />
         <div
@@ -133,8 +147,10 @@ const urlFor = useSanityImageUrl()
           class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 md:py-6 md:border-b md:border-subtle"
         >
           <img
-            :src="urlFor(room.mainImage).width(400).height(260).fit('crop').auto('format').url()"
+            v-bind="imgAttrs(room.mainImage, {width: 400, height: 260, sizes: '(min-width: 768px) 200px, 100vw'})"
             :alt="room.mainImage.alt || room.title"
+            loading="lazy"
+            decoding="async"
             class="w-full md:w-[200px] h-[200px] md:h-[130px] object-cover rounded-[10px] shrink-0"
           />
           <div class="flex-1 flex flex-col gap-2">
@@ -177,7 +193,13 @@ const urlFor = useSanityImageUrl()
           class="flex-1 bg-card rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-[transform,box-shadow]"
         >
           <div class="relative h-[170px] lg:h-[160px] overflow-hidden">
-            <img :src="urlFor(evt.mainImage).width(600).height(340).fit('crop').auto('format').url()" :alt="evt.mainImage.alt || evt.title" class="absolute inset-0 w-full h-full object-cover" />
+            <img
+              v-bind="imgAttrs(evt.mainImage, {width: 600, height: 340, sizes: '(min-width: 1024px) 33vw, 100vw'})"
+              :alt="evt.mainImage.alt || evt.title"
+              loading="lazy"
+              decoding="async"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
             <div
               class="absolute inset-0"
               style="background: linear-gradient(180deg, rgba(22,32,64,0) 0%, rgba(22,32,64,0.60) 100%)"
