@@ -10,7 +10,7 @@ const props = defineProps<{error: NuxtError}>()
 const is404 = computed(() => props.error.statusCode === 404)
 const title = computed(() => (is404.value ? 'Page not found' : 'Something went wrong'))
 
-useSeoMeta({title: () => `${props.error.statusCode} — ${title.value}`})
+useSeoMeta({title: () => `${props.error.statusCode ?? 500} — ${title.value}`})
 
 // Navigation must go through clearError so the error state is reset;
 // a plain NuxtLink would leave the app stuck on the error page.
