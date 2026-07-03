@@ -12,7 +12,7 @@ export default defineSitemapEventHandler(async () => {
     projectId: process.env.SANITY_PROJECT_ID || 'k6yyg6ms',
     dataset: process.env.SANITY_DATASET || 'development',
     apiVersion: process.env.SANITY_API_VERSION || '2025-01-01',
-    useCdn: true,
+    useCdn: process.env.SANITY_USE_CDN === 'true',
     perspective: 'published',
   })
 
