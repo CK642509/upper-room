@@ -17,6 +17,7 @@ if (!room.value) {
 const locationSlug = route.params.location as string
 if (room.value.location.slug !== locationSlug) {
   await navigateTo(`/rooms/${room.value.location.slug}/${room.value.slug}`, {redirectCode: 301, replace: true})
+  return
 }
 
 const urlFor = useSanityImageUrl()
