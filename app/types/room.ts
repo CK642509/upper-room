@@ -51,7 +51,7 @@ export interface RoomDetail extends RoomCard {
   heroImage?: RoomImage
   gallery?: RoomImage[]
   approxLocation?: ApproxLocation
-  /** Radius of the area circle in meters; the map defaults to 300 when unset. */
+  /** Radius of the area circle in meters; the map defaults to 200 when unset. */
   areaRadius?: number
 }
 
