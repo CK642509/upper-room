@@ -21,6 +21,9 @@ export default defineNuxtConfig({
     // non-production deploys are set noindex automatically. Replaces the old
     // static public/robots.txt which hard-coded the production host.
     '@nuxtjs/robots',
+    // <LMap>/<LTileLayer>/<LCircle> for the room-detail area map. Free OSM
+    // tiles — no API key. Components are client-only (wrapped in <ClientOnly>).
+    '@nuxtjs/leaflet',
   ],
   // Canonical site identity, used by the sitemap module (absolute URLs) and
   // overridable per-environment via NUXT_PUBLIC_SITE_URL (e.g. previews).

@@ -121,6 +121,19 @@ useSeoMeta({
           <PortableText v-if="room.body?.length" :value="room.body" />
           <p v-else>{{ room.description }}</p>
         </div>
+
+        <!-- Area map: a circle around an approximate point, not the address.
+             Rooms without coordinates simply don't get this section. -->
+        <template v-if="room.approxLocation">
+          <div class="w-full h-px bg-subtle" />
+          <h3 class="font-heading text-[24px] font-bold text-primary">Where you'll live</h3>
+          <div class="w-full h-[280px] lg:h-[380px] rounded-lg overflow-hidden border border-subtle">
+            <AppAreaMap :center="room.approxLocation" :radius="room.areaRadius" />
+          </div>
+          <p class="font-body text-[13px] font-normal text-muted">
+            The highlighted circle shows the general area. We share the exact address when you book a viewing.
+          </p>
+        </template>
       </div>
 
       <!-- Right Column -->
