@@ -33,6 +33,11 @@ export default defineNuxtConfig({
       // Mirrors site.url for app code (canonical/og:url in app.vue); the
       // NUXT_PUBLIC_SITE_URL env var overrides it at runtime by convention.
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.upperroom.tw',
+      // Google Maps JS API key for the room-detail area map (loaded via the
+      // @nuxt/scripts googleMaps registry). Public by design — Maps JS keys
+      // are always visible client-side; the key's HTTP-referrer restriction
+      // is the abuse control. Empty = the map section renders a placeholder.
+      googleMapsKey: process.env.NUXT_PUBLIC_GOOGLE_MAPS_KEY || '',
     },
   },
   // Static routes (/, /rooms, /events) are picked up automatically from

@@ -18,7 +18,9 @@ const DETAIL_FIELDS = `
   ${CARD_FIELDS},
   body,
   heroImage,
-  gallery[]{..., _key}
+  gallery[]{..., _key},
+  approxLocation{lat, lng},
+  areaRadius
 `
 
 /** All locations, in display order, each with how many rooms it has. */
