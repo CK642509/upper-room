@@ -31,13 +31,15 @@ const latLng = computed<[number, number]>(() => [props.center.lat, props.center.
         layer-type="base"
         name="OpenStreetMap"
       />
+      <!-- Coral (design token), not amber: OSM tiles are full of yellow/orange
+           roads, so an amber circle disappears into them. -->
       <LCircle
         :lat-lng="latLng"
         :radius="radius"
-        color="#F5C128"
-        :weight="2"
-        fill-color="#F5C128"
-        :fill-opacity="0.15"
+        color="#CC604A"
+        :weight="3"
+        fill-color="#CC604A"
+        :fill-opacity="0.18"
       />
     </LMap>
     <!-- Placeholder while the client-only map hydrates; matches OSM's beige
