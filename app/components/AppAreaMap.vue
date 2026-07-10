@@ -45,7 +45,7 @@ onMounted(() => {
     new Circle({
       map,
       center,
-      radius: props.radius ?? 300,
+      radius: props.radius ?? 200,
       strokeColor: '#CC604A',
       strokeWeight: 3,
       fillColor: '#CC604A',
