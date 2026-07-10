@@ -35,11 +35,24 @@ export interface RoomCard {
   bookedRanges?: BookedRange[]
 }
 
+/**
+ * Approximate coordinates of a room, used as the center of the area circle on
+ * the detail-page map. Editors place this at a nearby landmark, never the
+ * exact address (the dataset is publicly readable).
+ */
+export interface ApproxLocation {
+  lat: number
+  lng: number
+}
+
 /** Full room, used on the detail page. */
 export interface RoomDetail extends RoomCard {
   body?: PortableTextBlock[]
   heroImage?: RoomImage
   gallery?: RoomImage[]
+  approxLocation?: ApproxLocation
+  /** Radius of the area circle in meters; the map defaults to 300 when unset. */
+  areaRadius?: number
 }
 
 /** A location card on the /rooms landing and the navbar dropdown. */
