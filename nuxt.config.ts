@@ -21,9 +21,6 @@ export default defineNuxtConfig({
     // non-production deploys are set noindex automatically. Replaces the old
     // static public/robots.txt which hard-coded the production host.
     '@nuxtjs/robots',
-    // <LMap>/<LTileLayer>/<LCircle> for the room-detail area map. Free OSM
-    // tiles — no API key. Components are client-only (wrapped in <ClientOnly>).
-    '@nuxtjs/leaflet',
   ],
   // Canonical site identity, used by the sitemap module (absolute URLs) and
   // overridable per-environment via NUXT_PUBLIC_SITE_URL (e.g. previews).
@@ -36,6 +33,11 @@ export default defineNuxtConfig({
       // Mirrors site.url for app code (canonical/og:url in app.vue); the
       // NUXT_PUBLIC_SITE_URL env var overrides it at runtime by convention.
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.upperroom.tw',
+      // Google Maps JS API key for the room-detail area map (loaded via the
+      // @nuxt/scripts googleMaps registry). Public by design — Maps JS keys
+      // are always visible client-side; the key's HTTP-referrer restriction
+      // is the abuse control. Empty = the map section renders a placeholder.
+      googleMapsKey: process.env.NUXT_PUBLIC_GOOGLE_MAPS_KEY || '',
     },
   },
   // Static routes (/, /rooms, /events) are picked up automatically from
