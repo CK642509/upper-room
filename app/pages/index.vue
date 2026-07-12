@@ -35,8 +35,8 @@ useSeoMeta({
 <template>
   <main>
     <!-- Video hero: muted background footage of community events, with the
-         Wix-style pixel grid + a navy vignette over it, and a centered logo
-         badge + CTA. Without NUXT_PUBLIC_HERO_VIDEO_URL the static poster
+         Wix-style pixel grid + a navy vignette over it, and a centered CTA.
+         Without NUXT_PUBLIC_HERO_VIDEO_URL the static poster
          frame shows instead (same treatment). -->
     <section class="relative overflow-hidden h-[480px] md:h-[660px] bg-base">
       <video
@@ -67,14 +67,9 @@ useSeoMeta({
         style="background: linear-gradient(180deg, rgba(13,24,41,0.45) 0%, rgba(13,24,41,0.12) 40%, rgba(13,24,41,0.45) 100%)"
         aria-hidden="true"
       />
-      <div class="relative z-10 h-full flex flex-col items-center justify-center gap-8 md:gap-10 px-5">
+      <!-- h-3/4 + justify-end anchors the CTA at 1/4 of the hero height from the bottom -->
+      <div class="relative z-10 h-3/4 flex flex-col items-center justify-end px-5">
         <h1 class="sr-only">Upper Room — Co-living Rooms & Community Events in Taipei</h1>
-        <img
-          src="/logo.jpg"
-          alt="Upper Room Taipei Housing"
-          fetchpriority="high"
-          class="w-[150px] h-[150px] md:w-[210px] md:h-[210px] rounded-full object-cover ring-1 ring-primary/25 shadow-[0_12px_48px_rgba(0,0,0,0.55)]"
-        />
         <NuxtLink
           to="/rooms"
           class="font-body text-[15px] font-bold text-on-amber bg-amber rounded-full py-[14px] px-[38px] text-center hover:opacity-90 transition-opacity"
