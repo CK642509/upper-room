@@ -22,3 +22,7 @@ logs
 .env
 .env.*
 !.env.example
+
+# Hero video files (raw + encoded) — hosted on external storage (R2), not in
+# the repo; see NUXT_PUBLIC_HERO_VIDEO_URL in .env.example
+*.mp4
