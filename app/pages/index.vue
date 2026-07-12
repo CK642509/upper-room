@@ -47,7 +47,7 @@ useSeoMeta({
         muted
         loop
         playsinline
-        preload="auto"
+        preload="metadata"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <img
