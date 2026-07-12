@@ -11,6 +11,14 @@ const previewEvents = computed(() => {
   return d.upcoming.length ? d.upcoming : d.recentPast
 })
 const imgAttrs = useSanityImageAttrs()
+const heroVideoUrl = useRuntimeConfig().public.heroVideoUrl
+
+// Wix-style pixel grid laid over the hero video: a 3×3 semi-transparent black
+// cross pattern tiled at 3px. It masks the heavy compression artifacts of the
+// low-bitrate background video (so 720p reads as sharp) while darkening the
+// footage ~18% for overlay-content contrast.
+const HERO_GRID =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAACXBIWXMAAAAAAAAAAQCEeRdzAAAAG0lEQVR4nGNkgIBIBgaG5SxQxjMQDeIsh8kAAEJBBEkNyJBnAAAAAElFTkSuQmCC'
 
 // Homepage carries the full brand title itself, so skip the template suffix.
 useHead({titleTemplate: null})
@@ -26,40 +34,53 @@ useSeoMeta({
 
 <template>
   <main>
-    <!-- Hero (desktop layout from md / tablet up) -->
-    <section class="relative overflow-hidden h-[560px] md:h-[660px]">
+    <!-- Video hero: muted background footage of community events, with the
+         Wix-style pixel grid + a navy vignette over it, and a centered logo
+         badge + CTA. Without NUXT_PUBLIC_HERO_VIDEO_URL the static poster
+         frame shows instead (same treatment). -->
+    <section class="relative overflow-hidden h-[480px] md:h-[660px] bg-base">
+      <video
+        v-if="heroVideoUrl"
+        :src="heroVideoUrl"
+        poster="/hero-poster.jpg"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        class="absolute inset-0 w-full h-full object-cover"
+      />
       <img
-        src="https://images.unsplash.com/photo-1664947938370-f0c040bf9ced?w=1440&q=80"
-        alt="Co-living in Taiwan"
+        v-else
+        src="/hero-poster.jpg"
+        alt=""
         fetchpriority="high"
         class="absolute inset-0 w-full h-full object-cover"
       />
       <div
         class="absolute inset-0"
-        style="background: linear-gradient(90deg, rgba(13,24,41,0.93) 0%, rgba(13,24,41,0.40) 60%, rgba(13,24,41,0.07) 100%)"
+        :style="{backgroundImage: `url(${HERO_GRID})`, backgroundSize: '3px 3px', backgroundRepeat: 'repeat'}"
+        aria-hidden="true"
       />
-      <div class="relative z-10 h-full flex flex-col justify-center px-5 md:px-0 md:pl-20 md:pt-16 max-w-4xl">
-        <p class="font-body text-sm font-semibold text-amber mb-5 md:mb-7">🌏  Co-living in Taiwan</p>
-        <h1 class="font-heading font-bold text-primary text-[44px] leading-[1.05] md:text-[64px] md:leading-none md:max-w-[740px] lg:text-[80px]">
-          Feel at Home.<br>Meet Your People.
-        </h1>
-        <p class="font-body text-[15px] md:text-[17px] font-normal text-secondary mt-5 md:mt-7 leading-[1.6] md:leading-[1.65] md:max-w-[500px]">
-          Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.
-        </p>
-        <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 mt-7">
-          <NuxtLink
-            to="/rooms"
-            class="font-body text-[15px] font-bold text-on-amber bg-amber rounded-full py-[14px] px-[30px] text-center w-full md:w-auto hover:opacity-90 transition-opacity"
-          >
-            Browse Rooms
-          </NuxtLink>
-          <NuxtLink
-            to="/events"
-            class="font-body text-[15px] font-medium text-primary border border-primary/60 rounded-full py-[14px] px-[30px] text-center w-full md:w-auto hover:border-primary transition-colors"
-          >
-            See Events →
-          </NuxtLink>
-        </div>
+      <div
+        class="absolute inset-0"
+        style="background: linear-gradient(180deg, rgba(13,24,41,0.45) 0%, rgba(13,24,41,0.12) 40%, rgba(13,24,41,0.45) 100%)"
+        aria-hidden="true"
+      />
+      <div class="relative z-10 h-full flex flex-col items-center justify-center gap-8 md:gap-10 px-5">
+        <h1 class="sr-only">Upper Room — Co-living Rooms & Community Events in Taipei</h1>
+        <img
+          src="/logo.jpg"
+          alt="Upper Room Taipei Housing"
+          fetchpriority="high"
+          class="w-[150px] h-[150px] md:w-[210px] md:h-[210px] rounded-full object-cover ring-1 ring-primary/25 shadow-[0_12px_48px_rgba(0,0,0,0.55)]"
+        />
+        <NuxtLink
+          to="/rooms"
+          class="font-body text-[15px] font-bold text-on-amber bg-amber rounded-full py-[14px] px-[38px] text-center hover:opacity-90 transition-opacity"
+        >
+          Browse Rooms
+        </NuxtLink>
       </div>
     </section>
 
