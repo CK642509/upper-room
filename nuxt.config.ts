@@ -38,6 +38,10 @@ export default defineNuxtConfig({
       // are always visible client-side; the key's HTTP-referrer restriction
       // is the abuse control. Empty = the map section renders a placeholder.
       googleMapsKey: process.env.NUXT_PUBLIC_GOOGLE_MAPS_KEY || '',
+      // URL (https://...) or absolute path (/...) of the low-res homepage hero background video, hosted
+      // off-Vercel (e.g. Cloudflare R2) because of its size. Empty = the hero
+      // renders the static poster image (/hero-poster.jpg) instead.
+      heroVideoUrl: process.env.NUXT_PUBLIC_HERO_VIDEO_URL || '',
     },
   },
   // Static routes (/, /rooms, /events) are picked up automatically from
