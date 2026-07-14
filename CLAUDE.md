@@ -22,7 +22,7 @@ app/
   layouts/default.vue        # Wraps every page: <AppNavbar> + page + <AppFooter>, dark bg
   components/
     AppNavbar.vue            # Logo, Rooms dropdown (locations), Events/Contact links, CTA
-    AppFooter.vue            # Shared "Ready to move in?" contact section (id="contact")
+    AppFooter.vue            # Shared "Ready to move in?" contact section (id="contact"); buttons from the homepage singleton
     AppPagination.vue        # v-model numbered pager; self-hides when pageCount <= 1
     AppAreaMap.vue           # Google Map showing an approximate area as a translucent circle
   composables/

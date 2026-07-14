@@ -8,7 +8,7 @@
 - 🏠 **房間展示** - 依台北行政區分組的房間列表，支援入住／退租日期篩選與分頁
 - 🗺️ **區域地圖** - 房間詳細頁以 Google Map 圓圈標示大致區域（不揭露精確地址）
 - 📅 **社群活動** - 即將舉辦與過往活動的展示
-- 📝 **Sanity CMS** - 房間、地區、活動內容皆由 Sanity 管理，透過 GROQ 查詢
+- 📝 **Sanity CMS** - 房間、地區、活動與首頁文案（統計數字、About 區塊、聯絡按鈕）皆由 Sanity 管理，透過 GROQ 查詢
 - 🔍 **SEO 友善** - 每頁動態 meta 標籤（Open Graph）、canonical 網址、自動產生 sitemap
 - 🎨 **現代化 UI** - 使用 Tailwind CSS 與自訂設計系統
 - 📱 **響應式設計** - Mobile-first，完美適配各種裝置
@@ -17,7 +17,7 @@
 
 ### 環境需求
 
-- Node.js 18+
+- Node.js 22.12+（Nuxt 4 要求 `^22.12.0 || ^24.11.0 || >=26.0.0`）
 - npm 或 yarn
 
 ### 安裝步驟
@@ -81,12 +81,13 @@ upper-room/
 │   │       └── [id].vue              # 活動詳細頁
 │   ├── components/
 │   │   ├── AppNavbar.vue             # 導覽列（Logo、Rooms 下拉選單、導覽連結、CTA）
-│   │   ├── AppFooter.vue             # 共用聯絡區塊 footer（WhatsApp / Line / Email）
+│   │   ├── AppFooter.vue             # 共用聯絡區塊 footer（聯絡按鈕清單由 Sanity 管理）
 │   │   ├── AppPagination.vue         # 數字分頁元件（單頁時自動隱藏）
 │   │   └── AppAreaMap.vue            # Google Map 區域地圖（以圓圈標示大致位置）
 │   ├── composables/
 │   │   ├── useRooms.ts               # 房間與地區的 GROQ 查詢
 │   │   ├── useEvents.ts              # 活動的 GROQ 查詢
+│   │   ├── useHomepage.ts            # 首頁文案（homepage singleton）的 GROQ 查詢
 │   │   └── useSanityImageUrl.ts      # Sanity 圖片網址產生器 + 響應式 srcset 屬性 helper
 │   ├── types/                        # RoomCard / EventCard 等 TypeScript 型別
 │   ├── utils/                        # 日期、價格等格式化輔助函式（自動匯入）
@@ -116,8 +117,9 @@ upper-room/
   - 圓角：`rounded-md` (10px)、`rounded-lg` (16px)
 
 ### 資料管理
-- **Sanity CMS** - 房間、地區、活動內容集中在 Sanity，透過 `@nuxtjs/sanity` 以 GROQ 查詢
-- **Composables 資料層** - 所有查詢集中於 `useRooms.ts` / `useEvents.ts`，頁面不直接寫 GROQ
+- **Sanity CMS** - 房間、地區、活動與首頁文案集中在 Sanity，透過 `@nuxtjs/sanity` 以 GROQ 查詢
+- **Composables 資料層** - 所有查詢集中於 `useRooms.ts` / `useEvents.ts` / `useHomepage.ts`，頁面不直接寫 GROQ
+- **首頁文案可編輯** - 統計數字、About 區塊（標題、內文、照片、引言）、footer 聯絡按鈕來自 `homepage` singleton 文件；文件或欄位缺失時自動退回內建文案，頁面不會開天窗
 - **富文本** - 詳細頁內文使用 Portable Text，以 `@portabletext/vue` 渲染
 - **響應式圖片** - `useSanityImageAttrs()` 產生 `src` / `srcset` / `sizes` 屬性，依裝置載入合適尺寸的 Sanity 圖片
 
