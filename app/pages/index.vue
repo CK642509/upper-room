@@ -13,6 +13,29 @@ const previewEvents = computed(() => {
 const imgAttrs = useSanityImageAttrs()
 const heroVideoUrl = useRuntimeConfig().public.heroVideoUrl
 
+// Editable homepage copy from the Sanity `homepage` singleton; each field
+// falls back to the original hardcoded copy so a missing document (or field)
+// never renders an empty section.
+const {data: homepageData} = await useHomepageContent()
+const FALLBACK_STATS = [
+  {value: '12+', label: 'Furnished Rooms'},
+  {value: '50+', label: 'Events This Year'},
+  {value: '30+', label: 'Expat Residents'},
+  {value: '5★', label: 'Average Rating'},
+]
+const stats = computed(() => {
+  const s = homepageData.value?.stats
+  return s?.length ? s : FALLBACK_STATS
+})
+const about = computed(() => ({
+  heading: homepageData.value?.aboutHeading || 'Not just a room.\nA community.',
+  body:
+    homepageData.value?.aboutBody ||
+    'Upper Room is built for international residents who want more than four walls. We host weekly dinners, language exchanges, hikes, and cultural events — because the best part of living abroad is the people you meet.',
+  quote: homepageData.value?.aboutQuote || 'Best decision I made coming to Taiwan.',
+  image: homepageData.value?.aboutImage,
+}))
+
 // Wix-style pixel grid laid over the hero video: a 3×3 semi-transparent black
 // cross pattern tiled at 3px. It masks the heavy compression artifacts of the
 // low-bitrate background video (so 720p reads as sharp) while darkening the
@@ -82,17 +105,12 @@ useSeoMeta({
     <!-- Stats Bar -->
     <section class="w-full bg-amber py-7 px-5 lg:px-20 grid grid-cols-2 gap-6 lg:flex lg:items-center lg:justify-between">
       <div
-        v-for="stat in [
-          { num: '12+', lbl: 'Furnished Rooms' },
-          { num: '50+', lbl: 'Events This Year' },
-          { num: '30+', lbl: 'Expat Residents' },
-          { num: '5★', lbl: 'Average Rating' },
-        ]"
-        :key="stat.lbl"
+        v-for="stat in stats"
+        :key="stat.label"
         class="flex items-center justify-center lg:justify-start gap-3"
       >
-        <span class="font-heading text-[32px] font-bold text-on-amber">{{ stat.num }}</span>
-        <span class="font-body text-[13px] font-medium" style="color: rgba(13,24,41,0.67)">{{ stat.lbl }}</span>
+        <span class="font-heading text-[32px] font-bold text-on-amber">{{ stat.value }}</span>
+        <span class="font-body text-[13px] font-medium" style="color: rgba(13,24,41,0.67)">{{ stat.label }}</span>
       </div>
     </section>
 
@@ -101,12 +119,8 @@ useSeoMeta({
       <!-- Left -->
       <div class="order-2 lg:order-1 w-full lg:w-[640px] flex flex-col gap-6 py-12 lg:py-[72px] px-5 md:px-20">
         <p class="font-body text-[11px] font-bold text-amber tracking-[3px] uppercase">WHO WE ARE</p>
-        <h2 class="font-heading text-[34px] lg:text-[44px] font-bold text-primary leading-[1.15]">
-          Not just a room.<br>A community.
-        </h2>
-        <p class="font-body text-[15px] font-normal text-secondary leading-[1.75] lg:max-w-[480px]">
-          Upper Room is built for international residents who want more than four walls. We host weekly dinners, language exchanges, hikes, and cultural events — because the best part of living abroad is the people you meet.
-        </p>
+        <h2 class="font-heading text-[34px] lg:text-[44px] font-bold text-primary leading-[1.15] whitespace-pre-line">{{ about.heading }}</h2>
+        <p class="font-body text-[15px] font-normal text-secondary leading-[1.75] lg:max-w-[480px] whitespace-pre-line">{{ about.body }}</p>
         <div class="flex gap-6 lg:gap-8 mt-2">
           <div
             v-for="feat in [
@@ -125,6 +139,15 @@ useSeoMeta({
       <!-- Right -->
       <div class="order-1 lg:order-2 w-full lg:flex-1 relative overflow-hidden h-[300px] lg:h-[480px]">
         <img
+          v-if="about.image"
+          v-bind="imgAttrs(about.image, {width: 900, height: 540, sizes: '(min-width: 1024px) 56vw, 100vw'})"
+          :alt="about.image.alt || 'Community'"
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+        <img
+          v-else
           src="https://images.unsplash.com/photo-1714978444624-1fcb0c550a72?w=900&q=80"
           alt="Community"
           loading="lazy"
@@ -136,7 +159,7 @@ useSeoMeta({
           style="background: linear-gradient(270deg, rgba(13,24,41,0) 50%, rgba(13,24,41,0.73) 100%)"
         />
         <p class="absolute font-heading text-[20px] lg:text-[22px] font-semibold text-primary bottom-6 left-5 md:left-20 lg:bottom-12 lg:left-12 max-w-[300px] lg:max-w-[500px]">
-          "Best decision I made coming to Taiwan."
+          "{{ about.quote }}"
         </p>
       </div>
     </section>
