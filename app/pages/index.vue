@@ -125,7 +125,7 @@ useSeoMeta({
           <div
             v-for="feat in [
               { icon: '🏘️', txt: 'Taipei locations' },
-              { icon: '🎉', txt: 'Weekly events' },
+              { icon: '🎉', txt: 'Monthly events' },
               { icon: '🌍', txt: '30+ nationalities' },
             ]"
             :key="feat.txt"
