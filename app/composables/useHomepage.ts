@@ -12,6 +12,8 @@ export function useHomepageContent() {
     aboutBody,
     aboutQuote,
     aboutImage,
+    contactHeading,
+    contactSubheading,
     contactMethods[]{_key, label, url}
   }`)
 }

@@ -31,7 +31,7 @@ const about = computed(() => ({
   heading: homepageData.value?.aboutHeading || 'Not just a room.\nA community.',
   body:
     homepageData.value?.aboutBody ||
-    'Upper Room is built for international residents who want more than four walls. We host weekly dinners, language exchanges, hikes, and cultural events — because the best part of living abroad is the people you meet.',
+    'Upper Room is built for international residents who want more than four walls. We host monthly dinners, language exchanges, hikes, and cultural events — because the best part of living abroad is the people you meet.',
   quote: homepageData.value?.aboutQuote || 'Best decision I made coming to Taiwan.',
   image: homepageData.value?.aboutImage,
 }))
@@ -48,9 +48,9 @@ useHead({titleTemplate: null})
 useSeoMeta({
   title: 'Upper Room — Co-living Rooms & Community Events in Taipei',
   description:
-    'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+    'Furnished rooms for expats in Taipei, plus monthly events to help you actually connect with the city.',
   ogTitle: 'Upper Room — Co-living in Taipei',
-  ogDescription: 'Furnished rooms for expats in Taipei, plus weekly events to help you actually connect with the city.',
+  ogDescription: 'Furnished rooms for expats in Taipei, plus monthly events to help you actually connect with the city.',
   ogImage: 'https://images.unsplash.com/photo-1664947938370-f0c040bf9ced?w=1200&h=630&fit=crop&q=80',
 })
 </script>
@@ -125,7 +125,7 @@ useSeoMeta({
           <div
             v-for="feat in [
               { icon: '🏘️', txt: 'Taipei locations' },
-              { icon: '🎉', txt: 'Weekly events' },
+              { icon: '🎉', txt: 'Monthly events' },
               { icon: '🌍', txt: '30+ nationalities' },
             ]"
             :key="feat.txt"
