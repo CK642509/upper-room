@@ -14,6 +14,11 @@ const contacts = computed(() => {
   return methods?.length ? methods : FALLBACK_CONTACTS
 })
 
+const contactHeading = computed(() => homepageData.value?.contactHeading || 'Ready to move in?')
+const contactSubheading = computed(
+  () => homepageData.value?.contactSubheading || 'We reply within 24 hours. No commitment needed.',
+)
+
 // The first button is solid navy and later ones fade, so however many buttons
 // editors add, the row keeps its visual hierarchy.
 const CONTACT_BG = ['#0D1829', 'rgba(13,24,41,0.60)', 'rgba(13,24,41,0.40)']
@@ -24,9 +29,9 @@ const contactBg = (index: number) => CONTACT_BG[Math.min(index, CONTACT_BG.lengt
   <!-- Contact Section (shared footer on every page) -->
   <section id="contact" class="w-full bg-amber py-12 lg:py-14 px-5 md:px-20 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
     <div class="flex flex-col gap-2">
-      <h2 class="font-heading text-[32px] lg:text-[36px] font-bold text-on-amber">Ready to move in?</h2>
+      <h2 class="font-heading text-[32px] lg:text-[36px] font-bold text-on-amber">{{ contactHeading }}</h2>
       <p class="font-body text-[15px] font-normal" style="color: rgba(13,24,41,0.67)">
-        We reply within 24 hours. No commitment needed.
+        {{ contactSubheading }}
       </p>
     </div>
     <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full lg:w-auto">

@@ -25,5 +25,7 @@ export interface HomepageContent {
   /** Without quotation marks; the template adds them. */
   aboutQuote?: string
   aboutImage?: RoomImage
+  contactHeading?: string
+  contactSubheading?: string
   contactMethods?: ContactMethod[]
 }
