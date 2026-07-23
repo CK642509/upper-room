@@ -11,6 +11,8 @@ export interface ContactMethod {
   _key: string
   label: string
   url: string
+  /** When set, the button opens a QR popup (see AppQrModal) instead of navigating directly. */
+  qrImage?: RoomImage
 }
 
 /**
