@@ -42,17 +42,18 @@ useSeoMeta({
 
 <template>
   <main v-if="room">
-    <!-- Photo Hero -->
-    <section class="relative overflow-hidden h-[340px] lg:h-[480px]">
+    <!-- Photo Hero: object-contain so the image is never cropped top/bottom —
+         tall photos pillarbox (blank space left/right) against bg-base instead. -->
+    <section class="relative overflow-hidden h-[340px] lg:h-[480px] bg-base">
       <img
         v-bind="imgAttrs(heroPhoto, {width: 1600, height: 960, widths: [800, 1600], sizes: '100vw'})"
         :alt="heroPhoto.alt || room.title"
         fetchpriority="high"
-        class="absolute inset-0 w-full h-full object-cover"
+        class="absolute inset-0 w-full h-full object-contain"
       />
       <div
-        class="absolute inset-0"
-        style="background: linear-gradient(180deg, rgba(13,24,41,0) 40%, rgba(13,24,41,1) 100%)"
+        class="absolute inset-0 pointer-events-none"
+        style="background: linear-gradient(180deg, rgba(13,24,41,0) 80%, rgba(13,24,41,0.9) 100%)"
       />
 
       <!-- Back link -->
@@ -62,13 +63,13 @@ useSeoMeta({
       >
         ← {{ room.location.name }}
       </NuxtLink>
+    </section>
 
-      <!-- Thumbnails: click to swap the photo into the hero above. Scrolls
-           horizontally when there are more thumbs than the row fits. -->
-      <div
-        v-if="photos.length > 1"
-        class="absolute bottom-6 left-5 right-5 lg:bottom-[100px] lg:left-20 lg:right-20 z-10 flex gap-2 overflow-x-auto"
-      >
+    <!-- Photo strip: thumbnails live below the hero (not overlaid on it) so a
+         long gallery never obscures the photo. Click to swap into the hero
+         above. Scrolls horizontally when there are more thumbs than fit. -->
+    <section v-if="photos.length > 1" class="w-full bg-base px-5 lg:px-20 pt-4 lg:pt-6 pb-2">
+      <div class="flex gap-2 overflow-x-auto">
         <button
           v-for="(thumb, i) in photos"
           :key="thumb._key ?? i"
