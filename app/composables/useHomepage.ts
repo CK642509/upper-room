@@ -14,6 +14,6 @@ export function useHomepageContent() {
     aboutImage,
     contactHeading,
     contactSubheading,
-    contactMethods[]{_key, label, url}
+    contactMethods[]{_key, label, url, qrImage}
   }`)
 }
