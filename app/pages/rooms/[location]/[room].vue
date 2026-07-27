@@ -36,6 +36,12 @@ function findContact(urlKeyword: string, labelKeyword: string) {
 const whatsappMethod = computed(() => findContact('wa.me', 'whatsapp'))
 const lineMethod = computed(() => findContact('line.me', 'line'))
 
+// Keep in sync with the footer's contact subheading (same singleton field
+// and fallback) so the CTA copy matches across the site.
+const contactSubheading = computed(
+  () => homepageData.value?.contactSubheading || 'We reply within 24 hours. No commitment needed.',
+)
+
 const activeQrMethod = ref<ContactMethod | null>(null)
 function onContactClick(method?: ContactMethod) {
   if (method?.qrImage) activeQrMethod.value = method
@@ -161,7 +167,7 @@ useSeoMeta({
         <div class="w-full lg:min-w-[400px] bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-8">
           <h3 class="font-heading text-[26px] font-bold text-primary">Interested?</h3>
           <p class="font-body text-sm font-normal text-secondary leading-[1.6]">
-            We'll get back to you within 24 hours to arrange a viewing.
+            {{ contactSubheading }}
           </p>
           <component
             :is="whatsappMethod?.qrImage ? 'button' : 'a'"
