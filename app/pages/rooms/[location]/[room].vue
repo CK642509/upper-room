@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PortableText } from '@portabletext/vue'
+import type {ContactMethod} from '~/types/homepage'
 
 const route = useRoute()
 // NOTE: the [room] route param is the Sanity room slug (slug.current), not the
@@ -21,6 +22,30 @@ if (room.value.location.slug !== locationSlug) {
 
 const urlFor = useSanityImageUrl()
 const imgAttrs = useSanityImageAttrs()
+
+// WhatsApp/Line CTA buttons reuse the same homepage-singleton contact
+// methods as <AppFooter>, so editors manage one set of links/QR codes for
+// both. Matched by URL domain (falling back to the label) since editor-added
+// array items don't carry a stable `_key`.
+const {data: homepageData} = await useHomepageContent()
+function findContact(urlKeyword: string, labelKeyword: string) {
+  return homepageData.value?.contactMethods?.find(
+    (m) => m.url.toLowerCase().includes(urlKeyword) || m.label.toLowerCase().includes(labelKeyword),
+  )
+}
+const whatsappMethod = computed(() => findContact('wa.me', 'whatsapp'))
+const lineMethod = computed(() => findContact('line.me', 'line'))
+
+// Keep in sync with the footer's contact subheading (same singleton field
+// and fallback) so the CTA copy matches across the site.
+const contactSubheading = computed(
+  () => homepageData.value?.contactSubheading || 'We reply within 24 hours. No commitment needed.',
+)
+
+const activeQrMethod = ref<ContactMethod | null>(null)
+function onContactClick(method?: ContactMethod) {
+  if (method?.qrImage) activeQrMethod.value = method
+}
 
 // Photos shown in the hero slot: the dedicated hero shot (or main image)
 // first, then the gallery. Clicking a thumbnail swaps it into the hero.
@@ -142,22 +167,30 @@ useSeoMeta({
         <div class="w-full lg:min-w-[400px] bg-raised rounded-[16px] flex flex-col gap-5 p-6 lg:p-8">
           <h3 class="font-heading text-[26px] font-bold text-primary">Interested?</h3>
           <p class="font-body text-sm font-normal text-secondary leading-[1.6]">
-            We'll get back to you within 24 hours to arrange a viewing.
+            {{ contactSubheading }}
           </p>
-          <a
-            href="https://wa.me/"
+          <component
+            :is="whatsappMethod?.qrImage ? 'button' : 'a'"
+            :type="whatsappMethod?.qrImage ? 'button' : undefined"
+            :href="whatsappMethod?.qrImage ? undefined : whatsappMethod?.url || 'https://wa.me/'"
             class="w-full font-body text-[15px] font-bold text-on-amber bg-amber rounded-[10px] py-[15px] flex justify-center items-center hover:opacity-90 transition-opacity"
+            @click="onContactClick(whatsappMethod)"
           >
             Message on WhatsApp
-          </a>
-          <a
-            href="#"
+          </component>
+          <component
+            :is="lineMethod?.qrImage ? 'button' : 'a'"
+            :type="lineMethod?.qrImage ? 'button' : undefined"
+            :href="lineMethod?.qrImage ? undefined : lineMethod?.url || '#'"
             class="w-full font-body text-[15px] font-semibold text-amber border border-amber rounded-[10px] py-[15px] flex justify-center items-center hover:bg-amber/10 transition-colors"
+            @click="onContactClick(lineMethod)"
           >
             Contact via Line
-          </a>
+          </component>
         </div>
       </div>
     </section>
+
+    <AppQrModal v-if="activeQrMethod" :method="activeQrMethod" @close="activeQrMethod = null" />
   </main>
 </template>
